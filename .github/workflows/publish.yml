@@ -22,6 +22,14 @@ jobs:
         with:
           r-version: '4.2.0'
 
+        - name: Install system dependencies
+           if: runner.os == 'Linux'
+            run: |
+              while read -r cmd
+              do
+               eval sudo $cmd
+               done < <(Rscript -e 'cat(remotes::system_requirements("ubuntu", "22.04"), sep = "\n")')
+          
       - name: Install R Dependencies
         uses: r-lib/actions/setup-renv@v2
         with:
