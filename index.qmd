@@ -19,7 +19,7 @@ library(sidrar)
 # renv::snapshot()
 ```
 
-```{r , message=FALSE, warning=FALSE}
+```{r sidrar, message=FALSE, warning=FALSE}
 #d1: Taxa de Desocupação                      SIDRA  6381
 
 #chama as séries no sidra
@@ -31,7 +31,7 @@ d <- d |> dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)
 ```
 
 
-```{r , message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE}
+```{r grafico, message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE}
 # gráfico
 g <- ggplot2::ggplot() +
         geom_line (data = d,
@@ -62,5 +62,8 @@ g <- ggplot2::ggplot() +
             legend.text = element_text(size = 13 - 1, face = "bold"))
 
 g
+
+
 ```
 
+Última atualização em: `{r Sys.Date()}`.
