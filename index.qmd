@@ -116,7 +116,7 @@ g
 
 # 2) Taxa de desocupação por sexo (PNADC-T)
 
-```{r}
+```{r, s1}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/4093/n1/all/v/4099/p/all/c2/allxt/d/v4099%201")
 
@@ -154,7 +154,7 @@ g
 
 # 3) Nível de desocupação (PNADC-T)
 
-```{r}
+```{r, s2}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/4093/n1/all/v/4098/p/all/c2/6794/d/v4098%201")
 
@@ -192,7 +192,7 @@ g
 
 # 4) Quantidade de pessoas na força de trabalho
 
-```{r}
+```{r, s3}
 #chama a série no sidra
 d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32386") #FT
 
@@ -225,7 +225,7 @@ g
 
 # 5) Taxa de desocupação por faixa etária (PNADC-T)
 
-```{r}
+```{r, s4}
 #chama a série no sidra
 d <-sidrar::get_sidra(api = "/t/4094/n1/all/v/4099/p/all/c58/allxt/d/v4099%201")
 
@@ -265,7 +265,7 @@ g
 
 # 6) Quantidade de ocupados
 
-```{r}
+```{r, s5}
 #chama a série no sidra
 d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32387") 
 
@@ -313,7 +313,7 @@ paleta_9cores <- c(
 ```
 
 
-```{r, fig.height=8, fig.width=8}
+```{r, s6, fig.height=8, fig.width=8}
 d <- sidrar::get_sidra(api = "/t/6320/n1/all/v/4090/p/all/c11913/all")
 
 d1 <- d %>% 
@@ -493,7 +493,7 @@ g
 
 # 8) Quantidade de desocupados
 
-```{r}
+```{r, s7}
 #chama a série no sidra
 d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32446") 
 
@@ -526,7 +526,7 @@ g
 
 # 9) Quantidade de subocupados
 
-```{r}
+```{r, s8}
 #chama a série no sidra
 #d <- sidrar::get_sidra(api = "/t/4100/n1/all/v/1641/p/all/c604/31751") # trimestral
 d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31751") #subocupado
@@ -572,7 +572,7 @@ g
 
 # 11) Quantidade de desalentadas
 
-```{r}
+```{r, s19}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/46254") #Desalentados
 
@@ -610,7 +610,7 @@ g
 
 # 12) Força de trabalho potencial
 
-```{r}
+```{r, s10}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31752") #FT potencial
 
@@ -648,7 +648,7 @@ g
 
 # 13) Quantidade de pessoas subutilizadas
 
-```{r}
+```{r, s11}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/40286") #FT
 
@@ -684,7 +684,7 @@ Nota: A partir do 4º trimestre de 2015 houve mudança de conceito na subutiliza
 
 # 14) Composição da subutilização da força de trabalho no Brasil
 
-```{r}
+```{r, s12}
 #d1: Desocupados:                               SIDRA 1641 31750
 #d2: Subocupados por insuficiencia de horas:    SIDRA 1641 31751
 #d3: desalentados                               SIDRA 1641 46254
@@ -759,7 +759,7 @@ Nota: Houve mudança metodológica na subocupação por insuficiência de horas,
 
 Tabela 6387 - Rendimento médio, real e nominal, de todos os trabalhos, efetivamente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho.
 
-```{r}
+```{r, s13}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6387/n1/all/v/5935/p/all") 
 
@@ -801,7 +801,7 @@ g
 
 Tabela 6389 - Rendimento médio, real e nominal, trabalho principal, habitualmente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho, por posição na ocupação
 
-```{r}
+```{r, s14}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6389/n1/all/v/5932/p/last%201/c11913/31722,31723,31725,31726,31727,45934,45935,45936,45937,96165")
 
@@ -851,7 +851,7 @@ g
 
 # 17) Massa real de rendimentos de todos os trabalhos
 
-```{r}
+```{r, s15}
 #chama a série no sidra
 d1 <- sidrar::get_sidra(api = "/t/6393/n1/all/v/6295/p/all") %>%  #massa efetiva
       mutate(Grupo = "Efetiva")
@@ -889,7 +889,7 @@ f_ggsave(g, "PNADCT_MassaRendaHabTodosTrab")
 g
 ```
 
-```{r}
+```{r, s16}
 g <- ggplot()  +
   geom_line(data = d1[d1$Grupo == "Efetiva",],
             aes(x = date, 
@@ -915,7 +915,7 @@ g
 
 # 18) Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados
 
-```{r}
+```{r, s17}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6460/n1/all/v/8463/p/all/d/v8463%201")
 
@@ -950,7 +950,7 @@ g
 
 # 25) Salário mínimo real
 
-```{r}
+```{r, s18}
 #ipea <- ipeadatar::available_series()
 d <- ipeadatar::ipeadata("GAC12_SALMINRE12") %>% 
      mutate(MM12M = MM12m(value),
@@ -991,7 +991,7 @@ g
 # 27) Horas médias trabalhadas por raça
 
 
-```{r}
+```{r, s19}
 d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
                            raca = `Cor ou raça`,
@@ -1022,7 +1022,7 @@ g
 
 # 28) Rendimento real médio por sexo
 
-```{r}
+```{r, s20}
 
 d <-sidrar::get_sidra(api = "/t/5436/n1/all/v/5933/p/all/c2/allxt") #Rendimento Médio Real habitualmente recebidos por sexo  .
 
@@ -1058,7 +1058,7 @@ g
 
 # 29) População ocupada por contribuição ao instituto de previdência
 
-```{r}
+```{r, s21}
 
 d <-sidrar::get_sidra(api = "/t/5947/n1/all/v/4090/p/all/c12027/allxt") #População (por mil habitantes) que está contribuindo para instituto de previdencia.
 #selecionando dados e dando novos nomes as colunas
@@ -1091,7 +1091,7 @@ g
 
 # 30) Subocupação
 
-```{r}
+```{r, s22}
 d <-sidrar::get_sidra(api = "/t/6808/n1/all/v/9819,9820,9879,9883,9886/p/all/d/v9819%201,v9820%201,v9879%201,v9883%201") #Sub_ocupacao
 #selecionando dados e dando novos nomes as colunas
 d <- filter(d, `Variável (Código)` == 9819)
@@ -1124,7 +1124,7 @@ A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização 
 
 # 31) Rendimento real médio efetivo por posição de ocupação
 
-```{r}
+```{r, s23}
 d <-sidrar::get_sidra(api = "/t/5439/n1/all/v/5934/p/all/c12029/allxt") # Rendimento real médio efetivo por posição de ocupação
 
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
@@ -1158,7 +1158,7 @@ g
 
 # 32) população ocupada por setor
 
-```{r}
+```{r, s24}
 d <- sidrar::get_sidra(api = "/t/5434/n1/all/v/4090/p/all/c693/allxt") #População empregada nos diferentes setores 
 
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
@@ -1201,7 +1201,7 @@ g
 
 # 33) População ocupada por tamanho do estabelecimento
 
-```{r}
+```{r, s25}
 
 d2 <- sidrar::get_sidra(api = "/t/6413/n1/all/v/10441/p/all/c2/6794/c790/allxt") #População ocupada dividida pelo tamanho do empreendimento que trabalha (trabalho principal)
 
