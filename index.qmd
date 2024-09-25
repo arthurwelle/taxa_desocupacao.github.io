@@ -992,30 +992,31 @@ g
 
 
 ```{r, s19}
-d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
-d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
-                           raca = `Cor ou raça`,
-                           date = lubridate::yq(paste0(date))) %>% 
-            dplyr::select(date, Valor, raca)
 
-g <- ggplot()  +
-  geom_line(data = d1,
-            aes(x=date, 
-                y= Valor, 
-                color = raca),
-            size = 1.5) +
-  scale_x_date(date_breaks = "1 year", 
-               labels = scales::date_format("%Y"))  +
-  scale_y_continuous( limits=c(36,42)) +
-  labs(x = "",
-       y = "",
-       title = "Horas médias habitualmente trabalhadas no trabalho principal por cor ou raça - Brasil (2012-2023)",
-       caption = "Fonte: PNADC-Trimestral") + 
-  theme_bw() +
-  tema_padrao 
-         
-f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
-g
+# d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
+# d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+#                            raca = `Cor ou raça`,
+#                            date = lubridate::yq(paste0(date))) %>% 
+#             dplyr::select(date, Valor, raca)
+# 
+# g <- ggplot()  +
+#   geom_line(data = d1,
+#             aes(x=date, 
+#                 y= Valor, 
+#                 color = raca),
+#             size = 1.5) +
+#   scale_x_date(date_breaks = "1 year", 
+#                labels = scales::date_format("%Y"))  +
+#   scale_y_continuous( limits=c(36,42)) +
+#   labs(x = "",
+#        y = "",
+#        title = "Horas médias habitualmente trabalhadas no trabalho principal por cor ou raça - Brasil (2012-2023)",
+#        caption = "Fonte: PNADC-Trimestral") + 
+#   theme_bw() +
+#   tema_padrao 
+#          
+# f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
+# g
 
 ```   
 
