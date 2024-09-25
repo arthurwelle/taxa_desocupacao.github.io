@@ -23,8 +23,8 @@ jobs:
           r-version: '4.2.0'
 
       - name: Install system dependencies
-          if: runner.os == 'Linux'
-         run: |
+        if: runner.os == 'Linux'
+        run: |
               while read -r cmd
               do
               eval sudo $cmd
