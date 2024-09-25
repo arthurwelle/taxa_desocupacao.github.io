@@ -18,8 +18,8 @@ library(tidyverse)
 library(data.table)
 library(sidrar)
 
-# install.packages("devtools")
-# devtools::install_version("Matrix", version = "1.6-4", repos = "http://cran.us.r-project.org")
+# renv::snapshot()
+
 ```
 
 <!-- ```{r , message=FALSE, warning=FALSE} -->
