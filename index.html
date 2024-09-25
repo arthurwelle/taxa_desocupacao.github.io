@@ -20,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 </style>
 
 
@@ -141,8 +107,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#taxa-de-desocupação-brasil." id="toc-taxa-de-desocupação-brasil." class="nav-link active" data-scroll-target="#taxa-de-desocupação-brasil.">Taxa de Desocupação: Brasil.</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -166,16 +138,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is a Quarto website.</p>
-<p>To learn more about Quarto websites visit <a href="https://quarto.org/docs/websites" class="uri">https://quarto.org/docs/websites</a>.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
+<section id="taxa-de-desocupação-brasil." class="level3">
+<h3 class="anchored" data-anchor-id="taxa-de-desocupação-brasil.">Taxa de Desocupação: Brasil.</h3>
+<!-- ```{r , message=FALSE, warning=FALSE} -->
+<!-- #d1: Taxa de Desocupação                      SIDRA  6381 -->
+<!-- #chama as séries no sidra -->
+<!-- d <- sidrar::get_sidra(api = "/t/6381/n1/all/v/4099/p/all/d/v4099%201") #Taxa de Desocupação PNADCM -->
+<!-- #selecionando dados e dando novos nomes as colunas -->
+<!-- d <- d %>%  dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)`, "01")), -->
+<!--                             Serie = "PNADC") %>%  -->
+<!--               dplyr::select(date, Valor, Serie) -->
+<!-- ``` -->
+<!-- ```{r , message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE} -->
+<!-- # gráfico -->
+<!-- g <- ggplot2::ggplot() + -->
+<!--         geom_line (data = d,  -->
+<!--                    aes(x = date,  -->
+<!--                        y = Valor/100, -->
+<!--                        color = Serie), -->
+<!--                    size = 1.5) +   -->
+<!--         scale_y_continuous(limits = \(y){c(0, max(y) * 1.1)}, -->
+<!--                            labels = scales::percent_format(accuracy = 1)) + -->
+<!--         scale_x_date(date_breaks = "1 year", labels = scales::date_format("%Y")) + -->
+<!--         scale_color_brewer(palette = "Set1") + -->
+<!--         labs(x = element_blank(), -->
+<!--              y = element_blank(), -->
+<!--              caption = "Fonte: IBGE - PNAD Contínua Mensal", -->
+<!--              ) + -->
+<!--         theme_bw() + -->
+<!--         theme( -->
+<!--             text = element_text( face = "bold", size = 13), -->
+<!--             plot.title = element_text(size = 13, face = "bold"), -->
+<!--             plot.subtitle = element_text(size = 13 - 1), -->
+<!--             plot.title.position = "plot", -->
+<!--             plot.caption.position =  "plot", -->
+<!--             legend.title = element_blank(), -->
+<!--             legend.position="bottom", -->
+<!--             axis.text.x = element_text(color = "black", size = 13 - 1, angle = 90, vjust = 0.5), -->
+<!--             axis.text.y = element_text(color = "black", size = 13 - 1, face="bold"), -->
+<!--             axis.title = element_text( size = 13 - 1, face = "bold"), -->
+<!--             legend.text = element_text(size = 13 - 1, face = "bold")) -->
+<!-- g -->
+<!-- ``` -->
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
