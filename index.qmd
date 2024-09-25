@@ -1,8 +1,8 @@
 ---
-title: "taxa_desocupacao.github.io"
+title: "Taxa de desocupacão"
 ---
 
-### Taxa de Desocupação: Brasil.
+### Taxa de desocupação: Brasil.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
@@ -71,4 +71,4 @@ g
 
 ```
 
-Última atualização em: `{r Sys.Date()}`.
+Última atualização em: `r Sys.Date()`.
