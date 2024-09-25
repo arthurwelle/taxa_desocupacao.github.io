@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("data.table")
 library(tidyverse)
 library(sidrar)
-
+library(dados)
 # renv::snapshot()
 ```
 
@@ -68,7 +68,18 @@ g <- ggplot2::ggplot() +
 
 g
 
-Sys.time()
+
 ```
 
 Última atualização em: `r Sys.time()`.
+
+
+```{r}
+diamante %>%
+  filter(corte == "Bom") %>%
+  ggplot() +
+  geom_boxplot(aes(transparencia, preco, fill = transparencia)) +
+  theme(legend.position = "none") +
+  labs(title = "Diamantes", subtitle = "Preço e transparência", y = "Preço", x = "Transparência")
+```
+
