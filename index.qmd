@@ -1,8 +1,8 @@
 ---
-title: "Taxa de desocupacão"
+title: "Taxa de desocupação"
 ---
 
-### Taxa de desocupação: Brasil.
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
@@ -20,9 +20,45 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("data.table")
 library(tidyverse)
 library(sidrar)
-library(dados)
+library(ipeadatar)
+
 # renv::snapshot()
+
+tema_padrao <- ggplot2::theme(
+            text = element_text( face = "bold", size = 12),
+            plot.title = ggtext::element_textbox_simple(size = 14, face = "bold", margin = margin(0,0,10,0)),
+            plot.subtitle = element_text(size = 10),
+            plot.title.position = "plot",
+            plot.caption.position =  "plot",
+            legend.title = element_blank(),
+            legend.position="bottom",
+            axis.text.x = element_text(color = "black", size = 12, vjust = 0.5),
+            axis.text.y = element_text(color = "black", size = 12, face="bold"),
+            axis.title = element_text( size = 12, face = "bold"),
+            legend.text = element_text(size = 12, face = "bold"),
+            legend.margin = margin(0,0,0,0),
+            legend.box.margin = margin(-20,-10,-0,-10))
+
+f_ggsave <- function(x, Nome, w=8, h=5){
+ggplot2::ggsave(plot = x,
+                filename = paste0(Nome, ".png"), 
+                path = "./IMG/", 
+                dpi = "retina", 
+                width = w, 
+                height = h)}
+
+#cria função para media movel  12 meses 
+MM12m <- function(x) {
+  y <- c(1:(length(x)))                         
+  for(i in 1:(length(x)-11)) {          
+    y[i+11] <- mean(x[(i+0):(i+11)])  
+  }
+  y[1:12] <- NA 
+  return(y) 
+}
 ```
+
+# 1) Taxa de desocupação.
 
 ```{r sidrar, message=FALSE, warning=FALSE}
 #d1: Taxa de Desocupação                      SIDRA  6381
@@ -36,7 +72,7 @@ d <- d |> dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)
 ```
 
 
-```{r grafico, message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE}
+```{r grafico, message=FALSE, warning=FALSE, fig.height = 5, fig.width = 8, eval=TRUE, echo=FALSE}
 # gráfico
 g <- ggplot2::ggplot() +
         geom_line (data = d,
@@ -60,11 +96,11 @@ g <- ggplot2::ggplot() +
             plot.title.position = "plot",
             plot.caption.position =  "plot",
             legend.title = element_blank(),
-            legend.position="bottom",
             axis.text.x = element_text(color = "black", size = 13 - 1, angle = 90, vjust = 0.5),
             axis.text.y = element_text(color = "black", size = 13 - 1, face="bold"),
             axis.title = element_text( size = 13 - 1, face = "bold"),
-            legend.text = element_text(size = 13 - 1, face = "bold"))
+            legend.text = element_text(size = 13 - 1, face = "bold"),
+            legend.position = "none")
 
 g
 
@@ -74,12 +110,1131 @@ g
 Última atualização em: `r Sys.time()`.
 
 
+
+
+
+
+# 2) Taxa de desocupação por sexo (PNADC-T)
+
 ```{r}
-diamante %>%
-  filter(corte == "Bom") %>%
-  ggplot() +
-  geom_boxplot(aes(transparencia, preco, fill = transparencia)) +
-  theme(legend.position = "none") +
-  labs(title = "Diamantes", subtitle = "Preço e transparência", y = "Preço", x = "Transparência")
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/4093/n1/all/v/4099/p/all/c2/allxt/d/v4099%201")
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor / 100) %>% 
+            dplyr::select(date, Valor, Sexo)
+
 ```
 
+```{r}
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor, 
+                color = Sexo),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(0,0.20)) +
+  labs(x = "",
+       y = "",
+       title = "Taxa de desocupação por sexo - Brasil (2012-2023)",
+       subtitle = "Pessoas desocupadas sobre total de pessoas na força de trabalho",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCM_Taxa_Desocupacao_Sexo")
+g
+```
+
+
+# 3) Nível de desocupação (PNADC-T)
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/4093/n1/all/v/4098/p/all/c2/6794/d/v4098%201")
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor / 100) %>% 
+            select(date, Valor, Sexo)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(0,0.1)) +
+  labs(x = "",
+       y = "",
+       title = "Nível de desocupação - Brasil (2012-2023)",
+       subtitle = "Pessoas desocupadas sobre total de pessoas em idade para trabalhar",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCM_Nivel_Desocupacao_Sexo")
+g
+```
+
+
+
+# 4) Quantidade de pessoas na força de trabalho
+
+```{r}
+#chama a série no sidra
+d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32386") #FT
+
+#selecionando dados e dando novos nomes as colunas
+d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>% 
+           select(date, FT) %>% 
+           mutate(date = lubridate::ymd(paste0(date, "01")))
+      
+#cria gráfico ::ggplot
+g <- ggplot(d)  +
+          geom_line(aes(x = date, 
+                        y = FT),
+                    size = 1.5) +
+          scale_x_date(date_breaks = "1 year", 
+                       labels = scales::date_format("%Y")) +
+          scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
+                                                            accuracy = 0.1),
+                             limits = c(80e3,110e3)) +  
+          labs(x = "", 
+               y = "Milhões de pessoas",
+               title = "Quantidade de pessoas na força de trabalho",
+               caption = "Fonte: PNADC-Mensal" ) +  
+          theme_bw() +
+          tema_padrao
+
+f_ggsave(g, "Forca_Trabalho", h = 5)
+g
+```
+
+
+# 5) Taxa de desocupação por faixa etária (PNADC-T)
+
+```{r}
+#chama a série no sidra
+d <-sidrar::get_sidra(api = "/t/4094/n1/all/v/4099/p/all/c58/allxt/d/v4099%201")
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor / 100,
+                           FaixaEtaria = `Grupo de idade`) %>% 
+            dplyr::select(date, Valor, FaixaEtaria)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor, 
+                color = FaixaEtaria),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(0,0.50)) +
+  labs(x = "",
+       y = "",
+       title = "Taxa de desocupação por faixa etária - Brasil (2012-2023)",
+       subtitle = "Pessoas desocupadas sobre total de pessoas na força de trabalho por faixa etária",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao +
+  guides(color = guide_legend(nrow = 2))
+         
+f_ggsave(g, "PNADCM_Taxa_Desocupacao_FaixaEtaria")
+g
+```
+
+
+# 6) Quantidade de ocupados
+
+```{r}
+#chama a série no sidra
+d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32387") 
+
+#selecionando dados e dando novos nomes as colunas
+d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>% 
+           select(date, FT) %>% 
+           mutate(date = lubridate::ymd(paste0(date, "01")))
+      
+#cria gráfico ::ggplot
+g <- ggplot(d)  +
+          geom_line(aes(x = date, 
+                        y = FT),
+                    size = 1.5) +
+          scale_x_date(date_breaks = "1 year", 
+                       labels = scales::date_format("%Y")) +
+          scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
+                                                            accuracy = 0.1),
+                             limits = c(75e3,100e3)) +  
+          labs(x = "", 
+               y = "Milhões de pessoas",
+               title = "Quantidade de pessoas ocupadas",
+               caption = "Fonte: PNADC-Mensal" ) +  
+          theme_bw() +
+          tema_padrao
+
+f_ggsave(g, "PNADCM_Qtd_Ocupados", h = 5)
+g
+```
+
+
+# 7) Contribuição para a variação dos ocupados (média móvel 12 meses)
+
+```{r}
+paleta_9cores <- c(
+"#ffb703", # "Conta própria com CNPJ"
+"#fcbbbb", # "Conta própria sem CNPJ"        
+"#56e3da", # "Doméstico"
+"#7eafde", # "Empregado privado com carteira"
+"#ff2e2e", # "Empregado privado sem carteira"
+"#ff7e2e", # "Empregado público"
+"#2645e0", # "Empregador com CNPJ"
+"#a60000", # "Empregador sem CNPJ"           
+"#5eff8f" # "Trabalhador familiar auxiliar" 
+)
+```
+
+
+```{r, fig.height=8, fig.width=8}
+d <- sidrar::get_sidra(api = "/t/6320/n1/all/v/4090/p/all/c11913/all")
+
+d1 <- d %>% 
+            dplyr::mutate(date = `Trimestre Móvel (Código)`,
+                          Grupo = `Posição na ocupação e categoria do emprego no trabalho principal`,
+                          CodGrupo = `Posição na ocupação e categoria do emprego no trabalho principal (Código)`) %>% 
+            dplyr::select(date, Grupo, Valor, CodGrupo ) %>%
+            dplyr::mutate(date = lubridate::ymd(paste0(date, "01"))) %>% 
+            dplyr::arrange(CodGrupo,date) %>%
+            dplyr::group_by(CodGrupo) %>%
+            dplyr::mutate(MM12m = MM12m(Valor)) %>% 
+            dplyr::group_by(date) %>%
+            dplyr::mutate(STotal = sum(MM12m[which(Grupo == "Total")])) %>%
+            dplyr::group_by(CodGrupo) %>%
+            dplyr::mutate(diff = ((MM12m - lag(MM12m, n = 1L))/lag(STotal, n = 1L)) ,
+                          diff_anual = ((Valor - lag(Valor, n = 12L))/lag(STotal, n = 1L)) ) %>% 
+            dplyr::mutate(Grupo = recode(Grupo,
+"Empregado no setor privado, exclusive trabalhador doméstico - com carteira de trabalho assinada"  = "Empregado privado com carteira", 
+"Empregado no setor privado, exclusive trabalhador doméstico - sem carteira de trabalho assinada" = "Empregado privado sem carteira",
+"Empregado no setor público, exclusive militar e funcionário público estatutário - com carteira de trabalho assinada" = "Empregado público com carteira",
+"Empregado no setor público, exclusive militar e funcionário público estatutário - sem carteira de trabalho assinada" = "Empregado público sem carteira",
+"Trabalhador doméstico - com carteira de trabalho assinada"  = "Doméstico(a) com carteira",                
+"Trabalhador doméstico - sem carteira de trabalho assinada"  = "Doméstico(a) sem carteira" ))
+
+# seleciona casos
+d2 <- d1 %>%  dplyr::filter(CodGrupo==31722 | # empregodo privado com carteira
+                            CodGrupo==31723 | # empregodo privado sem carteira
+                            CodGrupo==31724 | # domestico total
+                            CodGrupo==31727 | # empregdo setor publico total
+                            CodGrupo==45934 | # Empregador com CNPJ
+                            CodGrupo==45935 | # Empregador sem CNPJ  
+                            CodGrupo==45936 | # conta propria com CNPJ
+                            CodGrupo==45937 | # conta propria sem CNPJ                                
+                            CodGrupo==31731   # trabalhador familiar
+                              )
+
+d4 <- d2 %>% 
+  dplyr::filter( date >= "2016-12-01") %>% 
+  mutate(Grupo = case_when(
+              Grupo == "Doméstico(a) com carteira" ~ "Doméstico",
+              Grupo == "Doméstico(a) sem carteira" ~ "Doméstico",
+              Grupo == "Empregado público com carteira" ~ "Empregado público",
+              Grupo == "Empregado público sem carteira" ~ "Empregado público",
+              TRUE ~ Grupo)) %>% 
+  group_by(date, Grupo) %>% 
+  summarise(diff_anual = sum(diff_anual))   
+
+d5 <- d4 %>%  
+  group_by(date) %>% 
+  summarise(diff_anual_total = sum(diff_anual)) 
+
+#cria gráfico ::ggplot
+g <- ggplot2::ggplot()  +
+          geom_col(data = d4, 
+                   aes(x=date, 
+                       y=diff_anual, 
+                       fill=Grupo),
+                   stats="identity") +
+          geom_line(data = d5, 
+                    aes(x=date, 
+                        y=diff_anual_total, 
+                        color = "Variação Total"), 
+                    size = 1) +
+          geom_hline(yintercept=0, 
+                     color = "black",
+                     size=1) +
+          scale_fill_manual(values = paleta_9cores) + 
+          scale_color_manual(name = "",  
+                             values = "black") +
+          scale_x_date(expand = c(0, 0), 
+                       date_breaks = "1 years", 
+                       date_labels = "%Y") +
+          scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+          labs(title = "Contribuição para a variação da média móvel 12 meses do total de ocupados por posição na ocupação e formalização (2017-2023)",
+               x = "", 
+               y = "Contribuição para a variação anual",
+               caption = "Fonte: PNADC Mensal") +
+          theme_bw() +
+          tema_padrao +
+          theme(legend.position="right",
+                legend.box.margin = margin(1,1,1,1)) +
+          guides(fill = guide_legend(ncol = 1),
+                 color = guide_legend(ncol = 1))
+
+f_ggsave(g, "PNADCM_Contribuicao_Variacao", h = 6, w=11)
+g
+```
+
+
+
+```{r, fig.height=8, fig.width=8}
+d1 <- d %>% 
+            dplyr::mutate(date = `Trimestre Móvel (Código)`,
+                          Grupo = `Posição na ocupação e categoria do emprego no trabalho principal`,
+                          CodGrupo = `Posição na ocupação e categoria do emprego no trabalho principal (Código)`) %>% 
+            dplyr::select(date, Grupo, Valor, CodGrupo ) %>%
+            dplyr::mutate(date = lubridate::ymd(paste0(date, "01"))) %>% 
+            dplyr::arrange(CodGrupo,date) %>%
+            dplyr::group_by(date) %>%
+            dplyr::mutate(STotal = sum(Valor[which(Grupo == "Total")])) %>%
+            dplyr::group_by(CodGrupo) %>%
+            dplyr::mutate(diff = ((Valor - lag(Valor, n = 1L))/lag(STotal, n = 1L)) ,
+                          diff_anual = ((Valor - lag(Valor, n = 1L))/lag(STotal, n = 1L)) ) %>% 
+            dplyr::mutate(Grupo = recode(Grupo,
+"Empregado no setor privado, exclusive trabalhador doméstico - com carteira de trabalho assinada"  = "Empregado privado com carteira", 
+"Empregado no setor privado, exclusive trabalhador doméstico - sem carteira de trabalho assinada" = "Empregado privado sem carteira",
+"Empregado no setor público, exclusive militar e funcionário público estatutário - com carteira de trabalho assinada" = "Empregado público com carteira",
+"Empregado no setor público, exclusive militar e funcionário público estatutário - sem carteira de trabalho assinada" = "Empregado público sem carteira",
+"Trabalhador doméstico - com carteira de trabalho assinada"  = "Doméstico(a) com carteira",                
+"Trabalhador doméstico - sem carteira de trabalho assinada"  = "Doméstico(a) sem carteira" ))
+
+d1 <- d1 |> filter(date >= as.Date("2022-01-01"))
+
+# seleciona casos
+d2 <- d1 %>%  dplyr::filter(CodGrupo==31722 | # empregodo privado com carteira
+                            CodGrupo==31723 | # empregodo privado sem carteira
+                            CodGrupo==31724 | # domestico total
+                            CodGrupo==31727 | # empregdo setor publico total
+                            CodGrupo==45934 | # Empregador com CNPJ
+                            CodGrupo==45935 | # Empregador sem CNPJ  
+                            CodGrupo==45936 | # conta propria com CNPJ
+                            CodGrupo==45937 | # conta propria sem CNPJ                                
+                            CodGrupo==31731   # trabalhador familiar
+                              )
+
+d4 <- d2 %>% 
+  dplyr::filter( date >= "2016-12-01") %>% 
+  mutate(Grupo = case_when(
+              Grupo == "Doméstico(a) com carteira" ~ "Doméstico",
+              Grupo == "Doméstico(a) sem carteira" ~ "Doméstico",
+              Grupo == "Empregado público com carteira" ~ "Empregado público",
+              Grupo == "Empregado público sem carteira" ~ "Empregado público",
+              TRUE ~ Grupo)) %>% 
+  group_by(date, Grupo) %>% 
+  summarise(diff_anual = sum(diff_anual))   
+
+d5 <- d4 %>%  
+  group_by(date) %>% 
+  summarise(diff_anual_total = sum(diff_anual)) 
+
+#cria gráfico ::ggplot
+g <- ggplot2::ggplot()  +
+          geom_col(data = d4, 
+                   aes(x = date, 
+                       y = diff_anual, 
+                       fill = Grupo),
+                   stats = "identity") +
+          geom_line(data = d5, 
+                    aes(x = date, 
+                        y = diff_anual_total, 
+                        color = "Variação Total"), 
+                    size = 1) +
+          geom_hline(yintercept = 0, 
+                     color = "black",
+                     size = 1) +
+          scale_fill_manual(values = paleta_9cores) + 
+          scale_color_manual(name = "",  
+                             values = "black") +
+          scale_x_date(expand = c(0, 0), 
+                       date_breaks = "1 years", 
+                       date_labels = "%Y") +
+          scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+          labs(title = "Contribuição para a variação do total de ocupados por posição na ocupação e formalização (2017-2023)",
+               x = element_blank(), 
+               y = "Contribuição para a variação",
+               caption = "Fonte: PNADC Mensal") +
+          theme_bw() +
+          tema_padrao +
+          theme(legend.position="right",
+                legend.box.margin = margin(1,1,1,1)) +
+          guides(fill = guide_legend(ncol = 1),
+                 color = guide_legend(ncol = 1))
+
+f_ggsave(g, "PNADCM_Contribuicao_Variacao_Mensal", h = 6, w=11)
+g
+```
+
+# 8) Quantidade de desocupados
+
+```{r}
+#chama a série no sidra
+d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32446") 
+
+#selecionando dados e dando novos nomes as colunas
+d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>% 
+           select(date, FT) %>% 
+           mutate(date = lubridate::ymd(paste0(date, "01")))
+      
+#cria gráfico ::ggplot
+g <- ggplot(d)  +
+          geom_line(aes(x = date, 
+                        y = FT),
+                    size = 1.5) +
+          scale_x_date(date_breaks = "1 year", 
+                       labels = scales::date_format("%Y")) +
+          scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
+                                                            accuracy = 0.1),
+                             limits = c(0e3,17e3)) +  
+          labs(x = "", 
+               y = "Milhões de pessoas",
+               title = "Quantidade de pessoas desocupadas",
+               caption = "Fonte: PNADC-Mensal" ) +  
+          theme_bw() +
+          tema_padrao
+
+f_ggsave(g, "PNADCM_Qtd_Desocupados", h = 5)
+g
+```
+
+
+# 9) Quantidade de subocupados
+
+```{r}
+#chama a série no sidra
+#d <- sidrar::get_sidra(api = "/t/4100/n1/all/v/1641/p/all/c604/31751") # trimestral
+d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31751") #subocupado
+#selecionando dados e dando novos nomes as colunas
+d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor) %>% 
+            select(date, Valor)
+
+# corrigindo o subocupado que em 3T2015 mudou de habitual para efetivo (ou o contrário).
+# preencher o buraco
+d2$Valor[44:45] <- d2$Valor[46]
+d2$Valor[] <- as.numeric(d2$Valor[])
+
+# e modificar os anteriores para ficar no mesmo patamar
+d2$Valor[1:43] <- (d2$Valor[1:43] / d2$Valor[43])*d2$Valor[46]
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d2,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1,
+                                                    scale = 1/1e3),
+                     limits = c(0,8e3)) +
+  labs(x = "",
+       y = "Milhões de pessoas",
+       title = "Quantidade de pessoas subocupadas - Brasil (2012-2023)",
+       subtitle = "Pessoas subocupadas por insuficiência de horas trabalhadas",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Qtd_Subocupadas")
+g
+```
+
+
+# 11) Quantidade de desalentadas
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/46254") #Desalentados
+
+#selecionando dados e dando novos nomes as colunas
+d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor) %>% 
+            select(date, Valor)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d2,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1,
+                                                    scale = 1/1e3),
+                     limits = c(0,7e3)) +
+  labs(x = "",
+       y = "Milhões de pessoas",
+       title = "Quantidade de pessoas desalentadas - Brasil (2012-2023)",
+       subtitle = "Pessoas desalentadas",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Qtd_Desalentadas")
+g
+```
+
+
+# 12) Força de trabalho potencial
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31752") #FT potencial
+
+#selecionando dados e dando novos nomes as colunas
+d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor) %>% 
+            select(date, Valor)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d2,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1,
+                                                    scale = 1/1e3),
+                     limits = c(0,13e3)) +
+  labs(x = "",
+       y = "Milhões de pessoas",
+       title = "Quantidade de pessoas na força de trabalho potencial - Brasil (2012-2023)",
+       subtitle = "Pessoas que apesar de não ocupadas nem desocupadas poderiam assumir um emprego",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Qtd_FTPotencial")
+g
+```
+
+
+# 13) Quantidade de pessoas subutilizadas
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/40286") #FT
+
+#selecionando dados e dando novos nomes as colunas
+d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>% 
+           select(date, FT) %>% 
+           mutate(date = lubridate::ymd(paste0(date, "01")))
+      
+#cria gráfico ::ggplot
+g <- ggplot(d)  +
+          geom_line(aes(x = date, 
+                        y = FT),
+                    size = 1.5) +
+          scale_x_date(date_breaks = "1 year", 
+                       labels = scales::date_format("%Y")) +
+          scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
+                                                            accuracy = 0.1),
+                             limits = c(0,35e3)) +  
+          labs(x = "", 
+               y = "Milhões de pessoas",
+               title = "Quantidade de pessoas subutilizadas",
+               subtitle = "Desocupados + Força de Trabalho potencial + subocupados",
+               caption = "Fonte: PNADC-Mensal" ) +  
+          theme_bw() +
+          tema_padrao
+
+f_ggsave(g, "QtdSubutilizacao", h = 5)
+g
+```
+
+Nota: A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas (subocupação). Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. <a href="https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Nota_Tecnica/Nota_Tecnica_022016.pdf">Mais informações aqui.</a>
+
+
+# 14) Composição da subutilização da força de trabalho no Brasil
+
+```{r}
+#d1: Desocupados:                               SIDRA 1641 31750
+#d2: Subocupados por insuficiencia de horas:    SIDRA 1641 31751
+#d3: desalentados                               SIDRA 1641 46254
+#d4: força de trabalho potencial                SIDRA 1641 31752
+
+# chama a série no sidra
+d1 <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31750") #desocupado
+d2 <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31751") #subocupado
+d3 <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/46254") #Desalentados
+d4 <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31752") #FTPotencial
+
+# selecionando dados e dando novos nomes as colunas
+d1 <- d1 %>%  dplyr::mutate(Desocupados = Valor/1000, date = `Trimestre Móvel (Código)`) %>%
+              dplyr::select(date, Desocupados)
+d2 <- d2 %>%  dplyr::mutate(Subocupados = Valor/1000, date = `Trimestre Móvel (Código)`) %>%
+              dplyr::select(date, Subocupados)
+d3 <- d3 %>%  dplyr::mutate(Desalentados = Valor/1000, date = `Trimestre Móvel (Código)`) %>%
+              dplyr::select(date, Desalentados)
+d4 <- d4 %>%  dplyr::mutate(FTPotencial = Valor/1000, date = `Trimestre Móvel (Código)`) %>%
+              dplyr::select(date, FTPotencial)
+
+# corrigindo o subocupado que em 3T2015 mudou de habitual para efetivo (ou o contrário).
+# preencher o buraco
+d2$Subocupados[44:45] <- d2$Subocupados[46]
+d2$Subocupados[] <- as.numeric(d2$Subocupados[])
+
+# e modificar os anteriores para ficar no mesmo patamar
+d2$Subocupados[1:43] <- (d2$Subocupados[1:43] / d2$Subocupados[43])*d2$Subocupados[46]
+
+# juntando
+d <- dplyr::left_join(d1, d2, by="date")
+d <- dplyr::left_join(d, d3, by="date")
+d <- dplyr::left_join(d, d4, by="date")
+
+# convertendo data de um dos dataframes para inserir no texto abaixo do gráfico
+d$date <- lubridate::ymd(paste0(d$date, "01"))
+
+# criando pessoas que procuraram emprego mas não poderiam assumir (FTpotencial - Desalento)
+d$ProcurouNaoAssumiria <- d$FTPotencial - d$Desalentados
+
+# total (para variação)
+d$total <- d$Desocupados + d$Subocupados + d$Desalentados + d$ProcurouNaoAssumiria
+
+# arredonda todas as colunas exceto a primeira
+d <- data.frame(d[1:1], round(d[2:7], digits = 2))
+
+# cria gráfico ::ggplot
+g <- ggplot2::ggplot(d)  +
+          geom_line(aes(x=date, y=Desocupados, color = "Desocupados"), size = 1.5) +
+          geom_line(aes(x=date, y=Subocupados, color = "Subocupados"), size = 1.5) +
+          geom_line(aes(x=date, y=Desalentados, color = "Desalentados"), size = 1.5) +
+          geom_line(aes(x=date, y=ProcurouNaoAssumiria, color = "Força de Trabalho potencial (exceto desalento)"), size = 1.5) +
+          labs(x = "", y = "Milhões de pessoas",
+               title = "Composição da Taxa composta da Subutilização da força de trabalho",
+               caption = "Fonte: PNADC-Mensal") +
+          scale_x_date(expand = c(0, 0), 
+                       date_breaks = "1 year", 
+                       labels = scales::date_format("%Y")) +
+          theme_bw() +
+          tema_padrao +
+          guides(color = guide_legend(nrow = 2))
+
+f_ggsave(g, "Composicao_Subutilizacao", h = 5)
+g
+
+```
+
+Nota: Houve mudança metodológica na subocupação por insuficiência de horas, apontada no item anterior. Por conta disto, neste caso, equalizamos o patamar da série até 2015 para manter a comparação com a série na metologia atual. 
+
+
+# 15) Rendimento efetivo médio todos os trabalhos
+
+Tabela 6387 - Rendimento médio, real e nominal, de todos os trabalhos, efetivamente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho.
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6387/n1/all/v/5935/p/all") 
+
+#selecionando dados e dando novos nomes as colunas
+d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                    date = lubridate::yq(paste0(date)),
+                    Valor = Valor) %>% 
+            select(date, Valor)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d2,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
+                                                    prefix = "R$",
+                                                    big.mark = ".",
+                                                    decimal.mark = ","),
+                     limits = c(0,4e3)) +
+  labs(x = "",
+       y = "",
+       title = "Rendimento médio efetivo de todos os trabalhos - Brasil (2012-2023)",
+       subtitle = "Pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_RendaMedEfeTodosTrab")
+g
+```
+
+
+# 16) Rendimento efetivo médio trabalhos principal, por posição na ocupação
+
+Tabela 6389 - Rendimento médio, real e nominal, trabalho principal, habitualmente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho, por posição na ocupação
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6389/n1/all/v/5932/p/last%201/c11913/31722,31723,31725,31726,31727,45934,45935,45936,45937,96165")
+
+#selecionando dados e dando novos nomes as colunas
+d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                    date = lubridate::yq(paste0(date)),
+                    Valor = Valor,
+                    variavel = `Posição na ocupação e categoria do emprego no trabalho principal`,
+                    cod = `Posição na ocupação e categoria do emprego no trabalho principal (Código)`,
+                    variavel = case_when(cod == 31722	~ "Empregado privado C/ Carteira",
+                                         cod == 31723	~ "Empregado privado S/ Carteira",
+                                         cod == 31725	~ "Trab. doméstico C/ Carteira",
+                                         cod == 31726	~ "Trab. doméstico S/ Carteira", 
+                                         TRUE ~ variavel)) %>% 
+            select(date, Valor, cod, variavel)
+```
+
+```{r}
+g <- ggplot()  +
+  geom_col(data = d2[d2$variavel != "Total",],
+            aes(x = reorder(variavel, Valor), 
+                y = Valor, 
+                fill = variavel),
+            size = 0.5,
+           color = "black") +
+  geom_hline(yintercept = d2[d2$variavel == "Total",]$Valor) +
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
+                                                    prefix = "R$",
+                                                    big.mark = ".",
+                                                    decimal.mark = ","),
+                     limits = c(0,8e3),
+                     expand = c(0,0)) +
+  coord_flip() +
+  labs(x = "",
+       y = "",
+       title = "Rendimento médio trabalho principal, habitualmente recebido - Brasil (2023)",
+       subtitle = "Pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao +
+  theme(legend.position = "none")
+         
+f_ggsave(g, "PNADCT_RendaMedHabTrabPrin_PosOcupa")
+g
+```
+
+
+# 17) Massa real de rendimentos de todos os trabalhos
+
+```{r}
+#chama a série no sidra
+d1 <- sidrar::get_sidra(api = "/t/6393/n1/all/v/6295/p/all") %>%  #massa efetiva
+      mutate(Grupo = "Efetiva")
+d2 <- sidrar::get_sidra(api = "/t/6392/n1/all/v/6293/p/all") %>% #massa habitual
+      mutate(Grupo = "Habitual")
+d <- rbind(d1,d2)
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
+                    date = lubridate::ymd(paste0(date, "01")),
+                    Valor = Valor/1000) %>% 
+            select(date, Valor, Grupo)
+
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d1[d1$Grupo == "Habitual",],
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +  
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1),
+                     limits = c(0,360)) +
+  labs(x = "",
+       y = "Bilhões R$",
+       title = "Massa real de rendimentos - Brasil (2012-2023)",
+       subtitle = "Rendimento efetivo total de todos os trabalhos",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_MassaRendaHabTodosTrab")
+g
+```
+
+```{r}
+g <- ggplot()  +
+  geom_line(data = d1[d1$Grupo == "Efetiva",],
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +  
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1),
+                     limits = c(0,360)) +
+  labs(x = "",
+       y = "Bilhões R$",
+       title = "Massa real de rendimentos - Brasil (2012-2023)",
+       subtitle = "Rendimento efetivo total de todos os trabalhos",
+       caption = "Fonte: PNADC-Mensal") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_MassaRendaEfeTodosTrab")
+g
+```
+
+
+
+# 18) Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados
+
+```{r}
+#chama a série no sidra
+d <- sidrar::get_sidra(api = "/t/6460/n1/all/v/8463/p/all/d/v8463%201")
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           Valor = Valor / 100) %>% 
+            select(date, Valor)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x = date, 
+                y = Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y")) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(0.5,0.75)) +
+  labs(x = "",
+       y = "",
+       title = "Taxa de cobertura previdênciária - Brasil (2012-2023)",
+       subtitle = "Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Tx_PrevidenciaTodosTrab")
+g
+```
+
+
+
+# 25) Salário mínimo real
+
+```{r}
+#ipea <- ipeadatar::available_series()
+d <- ipeadatar::ipeadata("GAC12_SALMINRE12") %>% 
+     mutate(MM12M = MM12m(value),
+            year = lubridate::year(date)) %>% 
+     filter(year>=1960)
+
+g <- ggplot()  +
+  geom_line(data = d,
+            aes(x = date, 
+                y = value),
+            size = 0.3) +
+  geom_line(data = d,
+            aes(x = date, 
+                y = MM12M),
+            size = 1.5) +
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
+                                                    prefix = "R$",
+                                                    big.mark = ".",
+                                                    decimal.mark = ","),
+                     limits = c(0,1700)) +
+  scale_x_date(expand = c(0.01, 0.01)) +
+  labs(x = "",
+       y = "",
+       title = "Salário mínimo real (1940-2023)",
+       subtitle = "Média móvel de 12 meses",
+       caption = "Fonte: IPEA") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "SM_real_IPEA")
+g
+```
+
+
+
+
+
+# 27) Horas médias trabalhadas por raça
+
+
+```{r}
+d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           raca = `Cor ou raça`,
+                           date = lubridate::yq(paste0(date))) %>% 
+            dplyr::select(date, Valor, raca)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor, 
+                color = raca),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous( limits=c(36,42)) +
+  labs(x = "",
+       y = "",
+       title = "Horas médias habitualmente trabalhadas no trabalho principal por cor ou raça - Brasil (2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
+g
+
+```   
+
+
+# 28) Rendimento real médio por sexo
+
+```{r}
+
+d <-sidrar::get_sidra(api = "/t/5436/n1/all/v/5933/p/all/c2/allxt") #Rendimento Médio Real habitualmente recebidos por sexo  .
+
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date))) %>% 
+            dplyr::select(date, Valor, Sexo)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor, 
+                color = Sexo),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
+                                                    prefix = "R$",
+                                                    big.mark = ".",
+                                                    decimal.mark = ","),
+                     limits = c(0,4000)) +
+  labs(x = "",
+       y = "",
+       title = "Renda média habitual de todos os trabalhos por Sexo - Brasil (2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Renda_Real_Media_Habitual_Sexo")
+g
+
+```
+
+# 29) População ocupada por contribuição ao instituto de previdência
+
+```{r}
+
+d <-sidrar::get_sidra(api = "/t/5947/n1/all/v/4090/p/all/c12027/allxt") #População (por mil habitantes) que está contribuindo para instituto de previdencia.
+#selecionando dados e dando novos nomes as colunas
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           contribui =`Contribuição para instituto de previdência em qualquer trabalho`, 
+                           date = lubridate::yq(paste0(date)))%>% 
+            dplyr::select(date, Valor, contribui)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor, 
+                color = contribui),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous(limits = c(0,70000),
+                     labels = scales::number_format(scale = 1/1e3)) +
+  labs(x = "",
+       y = "milhões",
+       title = "População ocupada por contribuição ao instituto de previdência (2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Pop_Contribuinte_NContribuintes")
+g
+```
+
+
+# 30) Subocupação
+
+```{r}
+d <-sidrar::get_sidra(api = "/t/6808/n1/all/v/9819,9820,9879,9883,9886/p/all/d/v9819%201,v9820%201,v9879%201,v9883%201") #Sub_ocupacao
+#selecionando dados e dando novos nomes as colunas
+d <- filter(d, `Variável (Código)` == 9819)
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                          date = lubridate::yq(paste0(date))) %>% 
+            dplyr::select(date, Valor)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous( limits = c(0,10)) +
+  labs(x = "",
+       y = "",
+       title = "Taxa de subocupação por insuficiência de horas trabalhadas(2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+         
+f_ggsave(g, "PNADCT_Taxa_Subocupacao")
+g
+```
+
+A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas. Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. Por conta disto, não são realizadas comparações (trimestrais e/ou anuais) entre trimestres que não compartilham o mesmo conceito/forma de captação.
+
+
+
+# 31) Rendimento real médio efetivo por posição de ocupação
+
+```{r}
+d <-sidrar::get_sidra(api = "/t/5439/n1/all/v/5934/p/all/c12029/allxt") # Rendimento real médio efetivo por posição de ocupação
+
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           pos_ocup = `Posição na ocupação no trabalho principal` ) %>% 
+            dplyr::select(date, Valor, pos_ocup)
+	
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date, 
+                y= Valor,
+                color = pos_ocup),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year", 
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
+                                                    prefix = "R$",
+                                                    big.mark = ".",
+                                                    decimal.mark = ","),
+                     limits=c(0,8000)) +
+  labs(x = "",
+       y = "",
+       title = "Rendimento Real médio habitual do trabalho principal por posição na \nocupação (2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao 
+f_ggsave(g, "PNADCT_Redimento_Real_Hab_Pos_Ocup")
+
+g
+```
+
+# 32) população ocupada por setor
+
+```{r}
+d <- sidrar::get_sidra(api = "/t/5434/n1/all/v/4090/p/all/c693/allxt") #População empregada nos diferentes setores 
+
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           date = lubridate::yq(paste0(date)),
+                           setor = `Grupamento de atividades no trabalho principal - PNADC`,
+                           codigo = `Grupamento de atividades no trabalho principal - PNADC (Código)`)
+d1 <- filter(d1, date== "2022-04-01")
+d1 <- mutate(d1, setor = ifelse(codigo== 33357, "Agropecuária e correlatos", setor))
+d1 <- mutate(d1, setor = ifelse(codigo== 39325, "Serviço Público", setor))
+d1 <- mutate(d1, setor = ifelse(codigo== 33361, "Comércio", setor))
+d1 <- mutate(d1, setor = ifelse(codigo== 33364, "Administrativo/Comercial", setor))
+d1 <- mutate(d1, setor = ifelse(codigo== 33362, "Transporte e correlatos", setor))
+
+
+d1 <- select(d1, date, Valor, setor)
+
+g <- ggplot()  +
+  geom_col(data = d1,
+            aes(x = reorder(setor, Valor), 
+                y = Valor),
+            fill = "steelblue",
+            color = "black",
+            size = 0.7) +
+  coord_flip() +
+  scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
+                                                    accuracy = 1),
+                     limits = c(0,2e4),
+                     expand = c(0.01, 0.01)) +   
+  labs(x = "",
+       y = "milhões de pessoas",
+       title = "População ocupada nos diferentes setores - Brasil (2022)",
+       caption = "Fonte: PNADC-Trimestral") + 
+  theme_bw() +
+  tema_padrao
+
+f_ggsave(g, "PNADCT_Pessoas_por_setor")
+
+g
+```
+
+# 33) População ocupada por tamanho do estabelecimento
+
+```{r}
+
+d2 <- sidrar::get_sidra(api = "/t/6413/n1/all/v/10441/p/all/c2/6794/c790/allxt") #População ocupada dividida pelo tamanho do empreendimento que trabalha (trabalho principal)
+
+d2 <- d2 %>%  
+  dplyr::mutate(date = Ano) %>%
+  dplyr::mutate(tamanho = `Tamanho do empreendimento` ) %>%
+  dplyr::mutate( tamanho_codigo = `Tamanho do empreendimento (Código)`) %>%
+  select(date, Valor, tamanho, tamanho_codigo)
+
+d3 <- mutate(d2, tamanho = case_when(tamanho_codigo == 40304 ~ "Entre 1 e 5 pessoas",
+                                   tamanho_codigo == 40305 ~ "Entre 6 e 10",
+                                   tamanho_codigo == 40306 ~ "Entre 11 e 50",
+                                   tamanho_codigo == 40307 ~ "Mais de 51"))
+d3$date <- as.numeric(d3$date)
+
+g <- ggplot()  +
+  geom_line(data = d3,
+            aes(x=date, 
+                y= Valor,
+                color = tamanho),
+            size = 1.5) +
+  scale_y_continuous( limits=c(0,45000),
+                      labels = scales::number_format(scale = 1/1e3,
+                                                    accuracy = 1)) +
+  labs(x = "",
+       y = "milhões",
+       title = "População ocupada por tamanho de empreendimento (2012-2019)",
+       caption = "Fonte: PNADC-Anual") + 
+  theme_bw() +
+  tema_padrao
+
+f_ggsave(g, "PNADCT_Pessoas_por_tamanho_empresa")
+
+g
+
+```
