@@ -7,6 +7,11 @@ title: "taxa_desocupacao.github.io"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 
+# sempre que tiver alterações
+# git add .
+# git commit -m "mensagem"
+# git push origin main
+
 # carrega pacotes e funções criados
 # install.packages("sidrar")
 # install.packages("tidyverse")
