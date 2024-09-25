@@ -32,7 +32,7 @@ d <- sidrar::get_sidra(api = "/t/6381/n1/all/v/4099/p/all/d/v4099%201") #Taxa de
 
 #selecionando dados e dando novos nomes as colunas
 d <- d |> dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)`, "01"))) %>%
-          dplyr::select(date, valor, serie)
+          dplyr::select(date, Valor)
 ```
 
 
@@ -41,8 +41,8 @@ d <- d |> dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)
 g <- ggplot2::ggplot() +
         geom_line (data = d,
                    aes(x = date,
-                       y = valor/100,
-                       color = serie),
+                       y = Valor/100,
+                       color = "serie"),
                    size = 1.5) +
         scale_y_continuous(limits = \(y){c(0, max(y) * 1.1)},
                            labels = scales::percent_format(accuracy = 1)) +
