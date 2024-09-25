@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 
 # carrega pacotes e funções criados
 # install.packages("sidrar")
-# install.packages("tidyverse")
+install.packages("tidyverse")
 # install.packages("ggplot2")
 # install.packages("scales")
 install.packages("data.table")
-# library(tidyverse)
+library(tidyverse)
 library(data.table)
 # library(sidrar)
 ```
