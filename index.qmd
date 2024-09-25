@@ -2,7 +2,6 @@
 title: "taxa_desocupacao.github.io"
 ---
 
-
 ### Taxa de Desocupação: Brasil.
 
 ```{r setup, include=FALSE}
@@ -15,56 +14,53 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("scales")
 # install.packages("data.table")
 library(tidyverse)
-library(data.table)
 library(sidrar)
 
 # renv::snapshot()
-
 ```
 
-<!-- ```{r , message=FALSE, warning=FALSE} -->
-<!-- #d1: Taxa de Desocupação                      SIDRA  6381 -->
+```{r , message=FALSE, warning=FALSE}
+#d1: Taxa de Desocupação                      SIDRA  6381
 
-<!-- #chama as séries no sidra -->
-<!-- d <- sidrar::get_sidra(api = "/t/6381/n1/all/v/4099/p/all/d/v4099%201") #Taxa de Desocupação PNADCM -->
+#chama as séries no sidra
+d <- sidrar::get_sidra(api = "/t/6381/n1/all/v/4099/p/all/d/v4099%201") #Taxa de Desocupação PNADCM
 
-<!-- #selecionando dados e dando novos nomes as colunas -->
-<!-- d <- d %>%  dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)`, "01")), -->
-<!--                             Serie = "PNADC") %>%  -->
-<!--               dplyr::select(date, Valor, Serie) -->
-<!-- ``` -->
+#selecionando dados e dando novos nomes as colunas
+d <- d |> dplyr::mutate(date = lubridate::ymd(paste0(`Trimestre Móvel (Código)`, "01"))) %>%
+          dplyr::select(date, valor, serie)
+```
 
 
-<!-- ```{r , message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE} -->
-<!-- # gráfico -->
-<!-- g <- ggplot2::ggplot() + -->
-<!--         geom_line (data = d,  -->
-<!--                    aes(x = date,  -->
-<!--                        y = Valor/100, -->
-<!--                        color = Serie), -->
-<!--                    size = 1.5) +   -->
-<!--         scale_y_continuous(limits = \(y){c(0, max(y) * 1.1)}, -->
-<!--                            labels = scales::percent_format(accuracy = 1)) + -->
-<!--         scale_x_date(date_breaks = "1 year", labels = scales::date_format("%Y")) + -->
-<!--         scale_color_brewer(palette = "Set1") + -->
-<!--         labs(x = element_blank(), -->
-<!--              y = element_blank(), -->
-<!--              caption = "Fonte: IBGE - PNAD Contínua Mensal", -->
-<!--              ) + -->
-<!--         theme_bw() + -->
-<!--         theme( -->
-<!--             text = element_text( face = "bold", size = 13), -->
-<!--             plot.title = element_text(size = 13, face = "bold"), -->
-<!--             plot.subtitle = element_text(size = 13 - 1), -->
-<!--             plot.title.position = "plot", -->
-<!--             plot.caption.position =  "plot", -->
-<!--             legend.title = element_blank(), -->
-<!--             legend.position="bottom", -->
-<!--             axis.text.x = element_text(color = "black", size = 13 - 1, angle = 90, vjust = 0.5), -->
-<!--             axis.text.y = element_text(color = "black", size = 13 - 1, face="bold"), -->
-<!--             axis.title = element_text( size = 13 - 1, face = "bold"), -->
-<!--             legend.text = element_text(size = 13 - 1, face = "bold")) -->
+```{r , message=FALSE, warning=FALSE, fig.height = 5, fig.width = 10, eval=TRUE, echo=FALSE}
+# gráfico
+g <- ggplot2::ggplot() +
+        geom_line (data = d,
+                   aes(x = date,
+                       y = valor/100,
+                       color = serie),
+                   size = 1.5) +
+        scale_y_continuous(limits = \(y){c(0, max(y) * 1.1)},
+                           labels = scales::percent_format(accuracy = 1)) +
+        scale_x_date(date_breaks = "1 year", labels = scales::date_format("%Y")) +
+        scale_color_brewer(palette = "Set1") +
+        labs(x = element_blank(),
+             y = element_blank(),
+             caption = "Fonte: IBGE - PNAD Contínua Mensal",
+             ) +
+        theme_bw() +
+        theme(
+            text = element_text( face = "bold", size = 13),
+            plot.title = element_text(size = 13, face = "bold"),
+            plot.subtitle = element_text(size = 13 - 1),
+            plot.title.position = "plot",
+            plot.caption.position =  "plot",
+            legend.title = element_blank(),
+            legend.position="bottom",
+            axis.text.x = element_text(color = "black", size = 13 - 1, angle = 90, vjust = 0.5),
+            axis.text.y = element_text(color = "black", size = 13 - 1, face="bold"),
+            axis.title = element_text( size = 13 - 1, face = "bold"),
+            legend.text = element_text(size = 13 - 1, face = "bold"))
 
-<!-- g -->
-<!-- ``` -->
+g
+```
 
