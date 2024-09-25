@@ -68,7 +68,7 @@ g <- ggplot2::ggplot() +
 
 g
 
-
+Sys.time()
 ```
 
-Última atualização em: `r Sys.Date()`.
+Última atualização em: `r Sys.time()`.
