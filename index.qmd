@@ -570,15 +570,15 @@ g
 ```
 
 
-# 11) Quantidade de desalentadas
+# 10) Quantidade de desalentadas
 
-```{r, s19}
+```{r, s9}
 #chama a série no sidra
 d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/46254") #Desalentados
 
 #selecionando dados e dando novos nomes as colunas
 d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
-                           date = lubridate::yq(paste0(date)),
+                           date = lubridate::ym(paste0(date)),
                            Valor = Valor) %>% 
             select(date, Valor)
 
@@ -608,7 +608,7 @@ g
 ```
 
 
-# 12) Força de trabalho potencial
+# 11) Força de trabalho potencial
 
 ```{r, s10}
 #chama a série no sidra
@@ -616,7 +616,7 @@ d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/31752") #FT poten
 
 #selecionando dados e dando novos nomes as colunas
 d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
-                           date = lubridate::yq(paste0(date)),
+                           date = lubridate::ym(date),
                            Valor = Valor) %>% 
             select(date, Valor)
 
@@ -646,7 +646,7 @@ g
 ```
 
 
-# 13) Quantidade de pessoas subutilizadas
+# 12) Quantidade de pessoas subutilizadas
 
 ```{r, s11}
 #chama a série no sidra
@@ -655,7 +655,7 @@ d <- sidrar::get_sidra(api = "/t/6438/n1/all/v/1641/p/all/c604/40286") #FT
 #selecionando dados e dando novos nomes as colunas
 d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>% 
            select(date, FT) %>% 
-           mutate(date = lubridate::ymd(paste0(date, "01")))
+           mutate(date = lubridate::ym(date))
       
 #cria gráfico ::ggplot
 g <- ggplot(d)  +
@@ -682,7 +682,7 @@ g
 Nota: A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas (subocupação). Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. <a href="https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Nota_Tecnica/Nota_Tecnica_022016.pdf">Mais informações aqui.</a>
 
 
-# 14) Composição da subutilização da força de trabalho no Brasil
+# 13) Composição da subutilização da força de trabalho no Brasil
 
 ```{r, s12}
 #d1: Desocupados:                               SIDRA 1641 31750
@@ -755,7 +755,7 @@ g
 Nota: Houve mudança metodológica na subocupação por insuficiência de horas, apontada no item anterior. Por conta disto, neste caso, equalizamos o patamar da série até 2015 para manter a comparação com a série na metologia atual. 
 
 
-# 15) Rendimento efetivo médio todos os trabalhos
+# 14) Rendimento efetivo médio todos os trabalhos
 
 Tabela 6387 - Rendimento médio, real e nominal, de todos os trabalhos, efetivamente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho.
 
@@ -765,7 +765,7 @@ d <- sidrar::get_sidra(api = "/t/6387/n1/all/v/5935/p/all")
 
 #selecionando dados e dando novos nomes as colunas
 d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
-                    date = lubridate::yq(paste0(date)),
+                    date = lubridate::ym(date),
                     Valor = Valor) %>% 
             select(date, Valor)
 
@@ -797,7 +797,7 @@ g
 ```
 
 
-# 16) Rendimento efetivo médio trabalhos principal, por posição na ocupação
+# 15) Rendimento efetivo médio trabalhos principal, por posição na ocupação
 
 Tabela 6389 - Rendimento médio, real e nominal, trabalho principal, habitualmente recebido no mês de referência, pelas pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho, por posição na ocupação
 
@@ -807,7 +807,7 @@ d <- sidrar::get_sidra(api = "/t/6389/n1/all/v/5932/p/last%201/c11913/31722,3172
 
 #selecionando dados e dando novos nomes as colunas
 d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
-                    date = lubridate::yq(paste0(date)),
+                    date = lubridate::ym(date),
                     Valor = Valor,
                     variavel = `Posição na ocupação e categoria do emprego no trabalho principal`,
                     cod = `Posição na ocupação e categoria do emprego no trabalho principal (Código)`,
@@ -849,7 +849,7 @@ g
 ```
 
 
-# 17) Massa real de rendimentos de todos os trabalhos
+# 16) Massa real de rendimentos de todos os trabalhos
 
 ```{r, s15}
 #chama a série no sidra
@@ -913,7 +913,7 @@ g
 
 
 
-# 18) Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados
+# 17) Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados
 
 ```{r, s17}
 #chama a série no sidra
@@ -948,7 +948,7 @@ g
 
 
 
-# 25) Salário mínimo real
+# 18) Salário mínimo real
 
 ```{r, s18}
 #ipea <- ipeadatar::available_series()
@@ -988,44 +988,44 @@ g
 
 
 
-# 27) Horas médias trabalhadas por raça
+# 19) Horas médias trabalhadas por raça
 
 
 ```{r, s19}
 
-# d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
-# d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
-#                            raca = `Cor ou raça`,
-#                            date = lubridate::yq(paste0(date))) %>% 
-#             dplyr::select(date, Valor, raca)
-# 
-# g <- ggplot()  +
-#   geom_line(data = d1,
-#             aes(x=date, 
-#                 y= Valor, 
-#                 color = raca),
-#             size = 1.5) +
-#   scale_x_date(date_breaks = "1 year", 
-#                labels = scales::date_format("%Y"))  +
-#   scale_y_continuous( limits=c(36,42)) +
-#   labs(x = "",
-#        y = "",
-#        title = "Horas médias habitualmente trabalhadas no trabalho principal por cor ou raça - Brasil (2012-2023)",
-#        caption = "Fonte: PNADC-Trimestral") + 
-#   theme_bw() +
-#   tema_padrao 
-#          
-# f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
-# g
+d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
+d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
+                           raca = `Cor ou raça`,
+                           date = lubridate::yq(paste0(date))) %>%
+            dplyr::select(date, Valor, raca)
+
+g <- ggplot()  +
+  geom_line(data = d1,
+            aes(x=date,
+                y= Valor,
+                color = raca),
+            size = 1.5) +
+  scale_x_date(date_breaks = "1 year",
+               labels = scales::date_format("%Y"))  +
+  scale_y_continuous( limits=c(36,42)) +
+  labs(x = "",
+       y = "",
+       title = "Horas médias habitualmente trabalhadas no trabalho principal por cor ou raça - Brasil (2012-2023)",
+       caption = "Fonte: PNADC-Trimestral") +
+  theme_bw() +
+  tema_padrao
+
+f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
+g
 
 ```   
 
 
-# 28) Rendimento real médio por sexo
+# 20) Rendimento real médio por sexo
 
 ```{r, s20}
 
-d <-sidrar::get_sidra(api = "/t/5436/n1/all/v/5933/p/all/c2/allxt") #Rendimento Médio Real habitualmente recebidos por sexo  .
+d <- sidrar::get_sidra(api = "/t/5436/n1/all/v/5933/p/all/c2/allxt") #Rendimento Médio Real habitualmente recebidos por sexo  .
 
 #selecionando dados e dando novos nomes as colunas
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
@@ -1057,11 +1057,11 @@ g
 
 ```
 
-# 29) População ocupada por contribuição ao instituto de previdência
+# 21) População ocupada por contribuição ao instituto de previdência
 
 ```{r, s21}
 
-d <-sidrar::get_sidra(api = "/t/5947/n1/all/v/4090/p/all/c12027/allxt") #População (por mil habitantes) que está contribuindo para instituto de previdencia.
+d <- sidrar::get_sidra(api = "/t/5947/n1/all/v/4090/p/all/c12027/allxt") #População (por mil habitantes) que está contribuindo para instituto de previdencia.
 #selecionando dados e dando novos nomes as colunas
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
                            contribui =`Contribuição para instituto de previdência em qualquer trabalho`, 
@@ -1090,10 +1090,10 @@ g
 ```
 
 
-# 30) Subocupação
+# 22) Subocupação
 
 ```{r, s22}
-d <-sidrar::get_sidra(api = "/t/6808/n1/all/v/9819,9820,9879,9883,9886/p/all/d/v9819%201,v9820%201,v9879%201,v9883%201") #Sub_ocupacao
+d <- sidrar::get_sidra(api = "/t/6808/n1/all/v/9819,9820,9879,9883,9886/p/all/d/v9819%201,v9820%201,v9879%201,v9883%201") #Sub_ocupacao
 #selecionando dados e dando novos nomes as colunas
 d <- filter(d, `Variável (Código)` == 9819)
 d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
@@ -1123,7 +1123,7 @@ A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização 
 
 
 
-# 31) Rendimento real médio efetivo por posição de ocupação
+# 23) Rendimento real médio efetivo por posição de ocupação
 
 ```{r, s23}
 d <-sidrar::get_sidra(api = "/t/5439/n1/all/v/5934/p/all/c12029/allxt") # Rendimento real médio efetivo por posição de ocupação
@@ -1157,7 +1157,7 @@ f_ggsave(g, "PNADCT_Redimento_Real_Hab_Pos_Ocup")
 g
 ```
 
-# 32) população ocupada por setor
+# 24) população ocupada por setor
 
 ```{r, s24}
 d <- sidrar::get_sidra(api = "/t/5434/n1/all/v/4090/p/all/c693/allxt") #População empregada nos diferentes setores 
@@ -1200,7 +1200,7 @@ f_ggsave(g, "PNADCT_Pessoas_por_setor")
 g
 ```
 
-# 33) População ocupada por tamanho do estabelecimento
+# 25) População ocupada por tamanho do estabelecimento
 
 ```{r, s25}
 
