@@ -1162,10 +1162,10 @@ g
 
 ```{r, s25}
 
-d2 <- sidrar::get_sidra(api = "/t/6413/n1/all/v/10441/p/all/c2/6794/c790/allxt") #População ocupada dividida pelo tamanho do empreendimento que trabalha (trabalho principal)
+d <- sidrar::get_sidra(api = "/t/6413/n1/all/v/10441/p/all/c2/6794/c790/allxt") #População ocupada dividida pelo tamanho do empreendimento que trabalha (trabalho principal)
 
-d2 <- d2 %>%  
-  mutate(date = Ano) %>%
+d2 <- d %>%  
+  mutate(date = as.Date(paste0(Ano, "-01-01"))) %>%
   mutate(tamanho = `Tamanho do empreendimento` ) %>%
   mutate( tamanho_codigo = `Tamanho do empreendimento (Código)`) %>%
   select(date, Valor, tamanho, tamanho_codigo)
@@ -1174,8 +1174,6 @@ d3 <- mutate(d2, tamanho = case_when(tamanho_codigo == 40304 ~ "Entre 1 e 5 pess
                                    tamanho_codigo == 40305 ~ "Entre 6 e 10",
                                    tamanho_codigo == 40306 ~ "Entre 11 e 50",
                                    tamanho_codigo == 40307 ~ "Mais de 51"))
-d3$date <- as.numeric(d3$date)
-
 g <- ggplot()  +
   geom_line(data = d3,
             aes(x =date, 
@@ -1190,7 +1188,7 @@ g <- ggplot()  +
   scale_color_brewer(palette = "Set1") +
   labs(x = element_blank(),
        y = "milhões",
-       title = "População ocupada por tamanho de empreendimento (2012-2019)",
+       title = "População ocupada por tamanho de empreendimento",
        caption = "Fonte: PNADC-Anual") + 
   theme_bw() +
   tema_padrao
