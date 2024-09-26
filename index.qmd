@@ -1157,50 +1157,10 @@ f_ggsave(g, "PNADCT_Redimento_Real_Hab_Pos_Ocup")
 g
 ```
 
-# 24) população ocupada por setor
-
-```{r, s24}
-d <- sidrar::get_sidra(api = "/t/5434/n1/all/v/4090/p/all/c693/allxt") #População empregada nos diferentes setores 
-
-d1 <- d %>%  dplyr::mutate(date = `Trimestre (Código)`,
-                           date = lubridate::yq(paste0(date)),
-                           setor = `Grupamento de atividades no trabalho principal - PNADC`,
-                           codigo = `Grupamento de atividades no trabalho principal - PNADC (Código)`)
-d1 <- filter(d1, date== "2022-04-01")
-d1 <- mutate(d1, setor = ifelse(codigo== 33357, "Agropecuária e correlatos", setor))
-d1 <- mutate(d1, setor = ifelse(codigo== 39325, "Serviço Público", setor))
-d1 <- mutate(d1, setor = ifelse(codigo== 33361, "Comércio", setor))
-d1 <- mutate(d1, setor = ifelse(codigo== 33364, "Administrativo/Comercial", setor))
-d1 <- mutate(d1, setor = ifelse(codigo== 33362, "Transporte e correlatos", setor))
 
 
-d1 <- select(d1, date, Valor, setor)
 
-g <- ggplot()  +
-  geom_col(data = d1,
-            aes(x = reorder(setor, Valor), 
-                y = Valor),
-            fill = "steelblue",
-            color = "black",
-            size = 0.7) +
-  coord_flip() +
-  scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
-                                                    accuracy = 1),
-                     limits = c(0,2e4),
-                     expand = c(0.01, 0.01)) +   
-  labs(x = "",
-       y = "milhões de pessoas",
-       title = "População ocupada nos diferentes setores - Brasil (2022)",
-       caption = "Fonte: PNADC-Trimestral") + 
-  theme_bw() +
-  tema_padrao
-
-f_ggsave(g, "PNADCT_Pessoas_por_setor")
-
-g
-```
-
-# 25) População ocupada por tamanho do estabelecimento
+# 24) População ocupada por tamanho do estabelecimento
 
 ```{r, s25}
 
