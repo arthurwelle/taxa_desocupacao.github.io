@@ -1,9 +1,5 @@
 ---
-title: "About"
+title: "Sobre"
 ---
 
-About this site
-
-```{r}
-1 + 1
-```
+Este é um site de teste para análise de conjuntura do mercado de trabalho brasileiro com R, Quarto, Github Actions e Github Pages.

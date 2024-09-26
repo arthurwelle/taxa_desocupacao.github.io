@@ -38,7 +38,7 @@ tema_padrao <- ggplot2::theme(
             axis.title = element_text( size = 12, face = "bold"),
             legend.text = element_text(size = 12, face = "bold"),
             legend.margin = margin(0,0,0,0),
-            legend.box.margin = margin(-20,-10,-0,-10))
+            legend.box.margin = margin(-10,-10,-0,-10))
 
 f_ggsave <- function(x, Nome, w=8, h=5){
 ggplot2::ggsave(plot = x,
