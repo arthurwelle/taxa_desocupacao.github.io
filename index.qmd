@@ -741,16 +741,18 @@ d <- data.frame(d[1:1], round(d[2:7], digits = 2))
 
 # cria gráfico ::ggplot
 g <- ggplot2::ggplot(d)  +
-          geom_line(aes(x =date, y =Desocupados, color = "Desocupados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y =Subocupados, color = "Subocupados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y =Desalentados, color = "Desalentados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y =ProcurouNaoAssumiria, color = "Força de Trabalho potencial (exceto desalento)"), linewidth = 1.5) +
-          labs(x = element_blank(), y = "Milhões de pessoas",
+          geom_line(aes(x =date, y = Desocupados, color = "Desocupados"), linewidth = 1.5) +
+          geom_line(aes(x =date, y = Subocupados, color = "Subocupados"), linewidth = 1.5) +
+          geom_line(aes(x =date, y = Desalentados, color = "Desalentados"), linewidth = 1.5) +
+          geom_line(aes(x =date, y = ProcurouNaoAssumiria, color = "Força de Trabalho potencial (exceto desalento)"), linewidth = 1.5) +
+          labs(x = element_blank(), 
+               y = "Milhões de pessoas",
                title = "Composição da Taxa composta da Subutilização da força de trabalho",
                caption = "Fonte: PNADC-Mensal") +
           scale_x_date(expand = c(0, 0), 
                        date_breaks = "1 year", 
                        labels = scales::date_format("%Y")) +
+          scale_color_brewer(palette = "Set1") +
           theme_bw() +
           tema_padrao +
           guides(color = guide_legend(nrow = 2))
@@ -882,7 +884,8 @@ g <- ggplot()  +
             aes(x = date, 
                 y = Valor,
                 color = Grupo),
-            linewidth = 1.5) +  
+            linewidth = 1.5,
+            alpha = 0.7) +  
   scale_x_date(date_breaks = "1 year", 
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::number_format(accuracy = 1),
@@ -891,7 +894,7 @@ g <- ggplot()  +
   labs(x = element_blank(),
        y = "Bilhões R$",
        title = "Massa real de rendimentos - Brasil",
-       subtitle = "Rendimento efetivo total de todos os trabalhos",
+       subtitle = "Rendimento habituais e efetivos totais de todos os trabalhos",
        caption = "Fonte: PNADC-Mensal") + 
   theme_bw() +
   tema_padrao 
@@ -963,7 +966,7 @@ g <- ggplot()  +
   scale_x_date(expand = c(0.01, 0.01)) +
   labs(x = element_blank(),
        y = element_blank(),
-       title = "Salário mínimo real (1940-2023)",
+       title = "Salário mínimo real",
        subtitle = "Média móvel de 12 meses",
        caption = "Fonte: IPEA") + 
   theme_bw() +
