@@ -512,7 +512,7 @@ g <- ggplot(d)  +
                        labels = scales::date_format("%Y")) +
           scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
                                                             accuracy = 0.1),
-                             limits = \(y){c(0, max(y) * 1.1)})) +  
+                             limits = \(y){c(0, max(y) * 1.1)}) +  
           labs(x = "", 
                y = "Milhões de pessoas",
                title = "Quantidade de pessoas desocupadas",
