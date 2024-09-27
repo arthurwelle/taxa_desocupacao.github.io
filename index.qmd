@@ -30,7 +30,7 @@ library(ipeadatar)
 ```
 
 
-```{r setup, include=FALSE}
+```{r}
 tema_padrao <- ggplot2::theme(
             text = element_text( face = "bold", size = 12),
             plot.title = ggtext::element_textbox_simple(size = 14, face = "bold", margin = margin(0,0,10,0)),
