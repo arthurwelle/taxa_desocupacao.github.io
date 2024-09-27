@@ -72,7 +72,7 @@ print(getwd())
 
 ```{r}
 d <- data.frame(x= 1:10)
-write.csv(d, "TESTE_SAVE_DATA.csv")
+write.csv(d, "/home/runner/work/taxa_desocupacao.github.io/taxa_desocupacao.github.io/IMG/TESTE_SAVE_DATA.csv")
 ```
 
 <!-- # 1) Taxa de desocupação. -->
