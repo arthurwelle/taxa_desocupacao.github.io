@@ -27,7 +27,10 @@ library(ipeadatar)
 # se instalar pacotes novos nesse projeto, precisa adiconaar ao lockfile
 # renv::status()
 # renv::snapshot()
+```
 
+
+```{r setup, include=FALSE}
 tema_padrao <- ggplot2::theme(
             text = element_text( face = "bold", size = 12),
             plot.title = ggtext::element_textbox_simple(size = 14, face = "bold", margin = margin(0,0,10,0)),
@@ -78,7 +81,11 @@ d <- data.frame(x= 1:10)
 write.csv(d, "/home/runner/work/taxa_desocupacao.github.io/taxa_desocupacao.github.io/IMG/TESTE_SAVE_DATA.csv")
 
 write.csv(d, here::here("nameTTTT.csv"))
+```
 
+
+```{r}
+here::here()
 ```
 
 <!-- # 1) Taxa de desocupação. -->
