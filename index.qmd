@@ -66,6 +66,11 @@ MM12m <- function(x) {
 
 
 ```{r}
+print(getwd())
+```
+
+
+```{r}
 d <- data.frame(x= 1:10)
 write.csv(d, "TESTE_SAVE_DATA.csv")
 ```
