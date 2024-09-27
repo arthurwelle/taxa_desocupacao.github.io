@@ -36,8 +36,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Upload CSV file
-        uses: actions/upload-artifact@v3
-        with:
-          name: csv-artifact  
-          path: name.csv  
+      - name: Commit and push
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "data updated"
+          git push
