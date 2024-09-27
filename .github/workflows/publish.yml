@@ -28,10 +28,6 @@ jobs:
         uses: r-lib/actions/setup-renv@v2
         with:
           cache-version: 1
-
-      - name: Debug R Script
-        run: |
-              Rscript -e "library(here); print(here::here()); write.csv(data.frame(x=1), here::here('name.csv'))"
     
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
