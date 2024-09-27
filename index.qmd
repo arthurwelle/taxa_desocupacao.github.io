@@ -24,6 +24,8 @@ library(tidyverse)
 library(sidrar)
 library(ipeadatar)
 
+# se instalar pacotes novos nesse projeto, precisa adiconaar ao lockfile
+# renv::status()
 # renv::snapshot()
 
 tema_padrao <- ggplot2::theme(
