@@ -71,6 +71,8 @@ MM12m <- function(x) {
 Última atualização em: `r as.POSIXct(format(Sys.time()), tz = "GMT")`.
 
 
+
+
 ```{r}
 print(getwd())
 ```
@@ -83,6 +85,9 @@ write.csv(d, "/home/runner/work/taxa_desocupacao.github.io/taxa_desocupacao.gith
 write.csv(d, here::here("nameTTTT.csv"))
 ```
 
+```{r}
+Sys.getenv("GITHUB_WORKSPACE")
+```
 
 ```{r}
 here::here()
