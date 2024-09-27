@@ -19,6 +19,7 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("ggplot2")
 # install.packages("scales")
 # install.packages("data.table")
+ # install.packages("here")
 library(tidyverse)
 library(sidrar)
 library(ipeadatar)
@@ -73,6 +74,9 @@ print(getwd())
 ```{r}
 d <- data.frame(x= 1:10)
 write.csv(d, "/home/runner/work/taxa_desocupacao.github.io/taxa_desocupacao.github.io/IMG/TESTE_SAVE_DATA.csv")
+
+write.csv(d, here::here("nameTTTT.csv"))
+
 ```
 
 <!-- # 1) Taxa de desocupação. -->
