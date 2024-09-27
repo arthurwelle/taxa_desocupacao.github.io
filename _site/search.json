@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Sobre",
+    "section": "",
+    "text": "Este é um site de teste para análise de conjuntura do mercado de trabalho brasileiro com R, Quarto, Github Actions e Github Pages."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Taxa de desocupação",
+    "section": "",
+    "text": "Última atualização em: 2024-09-27 12:31:23.\n\n\n[1] \"/home/runner/work/taxa_desocupacao.github.io/taxa_desocupacao.github.io\""
+  }
+]
