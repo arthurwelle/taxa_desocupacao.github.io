@@ -90,7 +90,10 @@ embed_data <- function(x = mtcars, filename= "file.csv", label= "Download"){
 Última atualização em: `r as.POSIXct(format(Sys.time()), tz = "GMT")`.
 
 
-Veja código em https://github.com/arthurwelle/taxa_desocupacao.github.io
+
+
+Veja código no <a href = "https://github.com/arthurwelle/taxa_desocupacao.github.io">github</a>.
+
 
 
 
