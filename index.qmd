@@ -4,6 +4,7 @@ title: "Taxa de desocupação"
 
 
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 
@@ -18,8 +19,6 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("ggplot2")
 # install.packages("scales")
 # install.packages("data.table")
-# install.packages("here")
-# install.packages("ggiraph")
 
 library(tidyverse)
 library(sidrar)
@@ -135,6 +134,10 @@ g1
 
 
 
+
+
+
+
 # 2) Taxa de desocupação por sexo (PNADC-T)
 
 ```{r, s1}
@@ -156,6 +159,12 @@ g <- ggplot()  +
                 y = Valor,
                 color = Sexo),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+                   aes(x = date,
+                       y = Valor,
+                       color = Sexo,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor * 100, "%")),
+                   size = 0.8) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1),
@@ -170,7 +179,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCM_Taxa_Desocupacao_Sexo")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -194,6 +204,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+                   aes(x = date,
+                       y = Valor,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor * 100, "%")),
+                   color = "black",
+                   size = 0.7) +    
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1),
@@ -207,7 +223,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCM_Nivel_Desocupacao_Sexo")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -228,10 +245,16 @@ g <- ggplot(d)  +
           geom_line(aes(x = date,
                         y = FT),
                     linewidth = 1.5) +
+          geom_point_interactive(
+                   aes(x = date,
+                       y = FT,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", FT)),
+                   color = "black",
+                   size = 0.7) +   
           scale_x_date(date_breaks = "1 year",
                        labels = scales::date_format("%Y")) +
           scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
-                                                            accuracy = 0.1),
+                                                            accuracy = 1),
                              limits = \(y){c(80e3, max(y) * 1.1)}) +
           labs(x = element_blank(),
                y = "Milhões de pessoas",
@@ -241,7 +264,8 @@ g <- ggplot(d)  +
           tema_padrao
 
 f_ggsave(g, "Forca_Trabalho", h = 5)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -267,6 +291,12 @@ g <- ggplot()  +
                 y = Valor,
                 color = FaixaEtaria),
             linewidth = 1.5) +
+   geom_point_interactive(data = d1,
+                   aes(x = date,
+                       y = Valor,
+                       color = FaixaEtaria,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor * 100, "%")),
+                   size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1),
@@ -282,7 +312,8 @@ g <- ggplot()  +
   guides(color = guide_legend(nrow = 2))
 
 f_ggsave(g, "PNADCM_Taxa_Desocupacao_FaixaEtaria")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -302,10 +333,16 @@ g <- ggplot(d)  +
           geom_line(aes(x = date,
                         y = FT),
                     linewidth = 1.5) +
+          geom_point_interactive(
+                   aes(x = date,
+                       y = FT,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", FT)),
+                   color = "black",
+                   size = 0.7) +   
           scale_x_date(date_breaks = "1 year",
                        labels = scales::date_format("%Y")) +
           scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
-                                                            accuracy = 0.1),
+                                                            accuracy = 1),
                              limits = \(y){c(75e3, max(y) * 1.1)} ) +
           labs(x = element_blank(),
                y = "Milhões de pessoas",
@@ -315,7 +352,8 @@ g <- ggplot(d)  +
           tema_padrao
 
 f_ggsave(g, "PNADCM_Qtd_Ocupados", h = 5)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -390,10 +428,11 @@ d5 <- d4 %>%
 
 #cria gráfico ::ggplot
 g <- ggplot2::ggplot()  +
-          geom_col(data = d4,
+          geom_col_interactive(data = d4,
                    aes(x = date,
                        y = diff_anual,
-                       fill = Grupo),
+                       fill = Grupo,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", round(diff_anual * 100, 1), "%" )),
                    stats = "identity") +
           geom_line(data = d5,
                     aes(x = date,
@@ -410,10 +449,10 @@ g <- ggplot2::ggplot()  +
                        date_breaks = "1 years",
                        date_labels = "%Y") +
           scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-          labs(title = "Contribuição para a variação da média móvel 12 meses do total de ocupados por posição na ocupação e formalização (2017-2023)",
+          labs(title = "Contribuição para a variação da média móvel 12 meses do total de ocupados por posição na ocupação e formalização",
                x = element_blank(),
                y = "Contribuição para a variação anual",
-               caption = "Fonte: PNADC-Mensal") +
+               caption = "Fonte: PNADC Mensal") +
           theme_bw() +
           tema_padrao +
           theme(legend.position = "bottom",
@@ -422,7 +461,8 @@ g <- ggplot2::ggplot()  +
                  color = guide_legend(ncol = 1))
 
 f_ggsave(g, "PNADCM_Contribuicao_Variacao", h = 6, w = 11)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -479,10 +519,11 @@ d5 <- d4 %>%
 
 #cria gráfico ::ggplot
 g <- ggplot2::ggplot()  +
-          geom_col(data = d4,
+          geom_col_interactive(data = d4,
                    aes(x = date,
                        y = diff_anual,
-                       fill = Grupo),
+                       fill = Grupo,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", round(diff_anual * 100, 1), "%" )),
                    stats = "identity") +
           geom_line(data = d5,
                     aes(x = date,
@@ -499,7 +540,7 @@ g <- ggplot2::ggplot()  +
                        date_breaks = "1 years",
                        date_labels = "%Y") +
           scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-          labs(title = "Contribuição para a variação do total de ocupados por posição na ocupação e formalização (2017-2023)",
+          labs(title = "Contribuição para a variação do total de ocupados por posição na ocupação e formalização",
                x = element_blank(),
                y = "Contribuição para a variação",
                caption = "Fonte: PNADC Mensal") +
@@ -511,14 +552,15 @@ g <- ggplot2::ggplot()  +
                  color = guide_legend(ncol = 1))
 
 f_ggsave(g, "PNADCM_Contribuicao_Variacao_Mensal", h = 6, w=11)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 # 8) Quantidade de desocupados
 
 ```{r, s7}
 #chama a série no sidra
-d <-sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32446")
+d <- sidrar::get_sidra(api = "/t/6318/n1/all/v/1641/p/all/c629/32446")
 
 #selecionando dados e dando novos nomes as colunas
 d <- d %>% mutate(FT = Valor, date = `Trimestre Móvel (Código)`) %>%
@@ -530,6 +572,12 @@ g <- ggplot(d)  +
           geom_line(aes(x = date,
                         y = FT),
                     linewidth = 1.5) +
+          geom_point_interactive(
+                   aes(x = date,
+                       y = FT,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", FT)),
+                   color = "black",
+                   size = 0.7) +   
           scale_x_date(date_breaks = "1 year",
                        labels = scales::date_format("%Y")) +
           scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
@@ -543,7 +591,8 @@ g <- ggplot(d)  +
           tema_padrao
 
 f_ggsave(g, "PNADCM_Qtd_Desocupados", h = 5)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -575,6 +624,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d2,
+                   aes(x = date,
+                       y = Valor,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor)),
+                   color = "black",
+                   size = 0.7) +    
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::number_format(accuracy = 1,
@@ -589,7 +644,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Qtd_Subocupadas")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -613,6 +669,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d2,
+                   aes(x = date,
+                       y = Valor,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor)),
+                   color = "black",
+                   size = 0.7) +     
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::number_format(accuracy = 1,
@@ -627,7 +689,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Qtd_Desalentadas")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -651,6 +714,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d2,
+                   aes(x = date,
+                       y = Valor,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor)),
+                   color = "black",
+                   size = 0.7) +    
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::number_format(accuracy = 1,
@@ -665,7 +734,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Qtd_FTPotencial")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -685,6 +755,12 @@ g <- ggplot(d)  +
           geom_line(aes(x = date,
                         y = FT),
                     linewidth = 1.5) +
+           geom_point_interactive(
+                   aes(x = date,
+                       y = FT,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", FT)),
+                   color = "black",
+                   size = 0.7) +    
           scale_x_date(date_breaks = "1 year",
                        labels = scales::date_format("%Y")) +
           scale_y_continuous(labels = scales::number_format(scale = 1/1e3,
@@ -699,7 +775,8 @@ g <- ggplot(d)  +
           tema_padrao
 
 f_ggsave(g, "QtdSubutilizacao", h = 5)
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 Nota: A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas (subocupação). Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. <a href="https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Nota_Tecnica/Nota_Tecnica_022016.pdf">Mais informações aqui.</a>
@@ -753,13 +830,23 @@ d$total <- d$Desocupados + d$Subocupados + d$Desalentados + d$ProcurouNaoAssumir
 
 # arredonda todas as colunas exceto a primeira
 d <- data.frame(d[1:1], round(d[2:7], digits = 2))
-
+d <- pivot_longer(data = d, cols = -date) 
+d <- d |>  filter(!name %in% c("FTPotencial", "total")) |> 
+     select(date, serie = name, value) |> 
+     mutate(serie = ifelse(serie == "ProcurouNaoAssumiria", "Força de trabalho potencial (exceto desalento)", serie))
+  
 # cria gráfico ::ggplot
 g <- ggplot2::ggplot(d)  +
-          geom_line(aes(x =date, y = Desocupados, color = "Desocupados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y = Subocupados, color = "Subocupados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y = Desalentados, color = "Desalentados"), linewidth = 1.5) +
-          geom_line(aes(x =date, y = ProcurouNaoAssumiria, color = "Força de Trabalho potencial (exceto desalento)"), linewidth = 1.5) +
+          geom_line(aes(x = date, 
+                        y = value, 
+                        color = serie), 
+                    linewidth = 1.5) +
+          geom_point_interactive(
+                   aes(x = date,
+                       y = value,
+                       color = serie,
+                       tooltip = paste0(format(date, format = "%m/%Y"), " ", value)),
+                   size = 0.7) +    
           labs(x = element_blank(),
                y = "Milhões de pessoas",
                title = "Composição da Taxa composta da Subutilização da força de trabalho",
@@ -773,7 +860,8 @@ g <- ggplot2::ggplot(d)  +
           guides(color = guide_legend(nrow = 2))
 
 f_ggsave(g, "Composicao_Subutilizacao", h = 5)
-g
+g1 <- girafe(ggobj = g)
+g1
 
 ```
 
@@ -802,6 +890,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d2,
+           aes(x = date,
+               y = Valor,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", Valor)),
+           color = "black",
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
@@ -818,7 +912,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_RendaMedEfeTodosTrab")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -844,14 +939,17 @@ d2 <- d %>%  mutate(date = `Trimestre Móvel (Código)`,
             select(date, Valor, cod, variavel)
 ```
 
+
+
 ```{r}
 g <- ggplot()  +
-  geom_col(data = d2[d2$variavel != "Total",],
+  geom_col_interactive(data = d2[d2$variavel != "Total",],
             aes(x = reorder(variavel, Valor),
                 y = Valor,
-                fill = variavel),
+                fill = variavel,
+                tooltip = paste0("R$", round(Valor) )) ,
             size = 0.5,
-           color = "black") +
+            color = "black") +
   geom_hline(yintercept = d2[d2$variavel == "Total",]$Valor) +
   scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
                                                     prefix = "R$",
@@ -863,7 +961,7 @@ g <- ggplot()  +
   coord_flip() +
   labs(x = element_blank(),
        y = element_blank(),
-       title = "Rendimento médio trabalho principal, habitualmente recebido - Brasil (2023)",
+       title = "Rendimento médio trabalho principal, habitualmente recebido - Brasil",
        subtitle = "Pessoas de 14 anos ou mais de idade, ocupadas na semana de referência, com rendimento de trabalho",
        caption = "Fonte: PNADC-Mensal") +
   theme_bw() +
@@ -871,7 +969,8 @@ g <- ggplot()  +
   theme(legend.position = "none")
 
 f_ggsave(g, "PNADCT_RendaMedHabTrabPrin_PosOcupa")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -901,6 +1000,12 @@ g <- ggplot()  +
                 color = Grupo),
             linewidth = 1.5,
             alpha = 0.7) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               color = Grupo,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", Valor)),
+           size = 0.7) +     
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::number_format(accuracy = 1),
@@ -915,7 +1020,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_MassaRendaHabTodosTrab")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -937,6 +1043,12 @@ g <- ggplot()  +
             aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor * 100, "%")),
+           color = "black",
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1),
@@ -950,7 +1062,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Tx_PrevidenciaTodosTrab")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -962,17 +1075,29 @@ g
 d <- ipeadatar::ipeadata("GAC12_SALMINRE12") %>%
      mutate(MM12M = MM12m(value),
             year = lubridate::year(date)) %>%
-     filter(year>=1960)
+     filter(year >= 1960)
 
 g <- ggplot()  +
   geom_line(data = d,
             aes(x = date,
                 y = value),
             size = 0.3) +
+  geom_point_interactive(data = d,
+           aes(x = date,
+               y = value,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", round(value, 2) )),
+           color = "black",
+           size = 0.01) +    
   geom_line(data = d,
             aes(x = date,
                 y = MM12M),
             linewidth = 1.5) +
+  geom_point_interactive(data = d,
+           aes(x = date,
+               y = MM12M,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", round(MM12M, 2) )),
+           color = "black",
+           size = 0.3) +   
   scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
                                                     prefix = "R$",
                                                     big.mark = ".",
@@ -988,7 +1113,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "SM_real_IPEA")
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -1000,7 +1126,7 @@ g
 
 ```{r, s19}
 
-d <-sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
+d <- sidrar::get_sidra(api = "/t/6406/n1/all/v/8186/p/all/c86/allxt/d/v8186%201") #Horas médias trabalhadas por cor ou raça
 d1 <- d %>%  mutate(date = `Trimestre (Código)`,
                            raca = `Cor ou raça`,
                            date = lubridate::yq(paste0(date))) %>%
@@ -1012,9 +1138,15 @@ g <- ggplot()  +
                 y = Valor,
                 color = raca),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               color = raca,
+               tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor)),
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
-  scale_y_continuous( limits=c(36, 42)) +
+  scale_y_continuous( limits = c(36, 42)) +
   scale_color_brewer(palette = "Set1") +
   labs(x = element_blank(),
        y = element_blank(),
@@ -1024,7 +1156,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Hora_Media_Habitual_Cor")
-g
+g1 <- girafe(ggobj = g)
+g1
 
 ```
 
@@ -1043,10 +1176,16 @@ d1 <- d %>%  mutate(date = `Trimestre (Código)`,
 
 g <- ggplot()  +
   geom_line(data = d1,
-            aes(x =date,
+            aes(x = date,
                 y = Valor,
                 color = Sexo),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               color = Sexo,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", Valor)),
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
   scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
@@ -1063,7 +1202,8 @@ g <- ggplot()  +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Renda_Real_Media_Habitual_Sexo")
-g
+g1 <- girafe(ggobj = g)
+g1
 
 ```
 
@@ -1087,6 +1227,12 @@ g <- ggplot()  +
                 y = Valor,
                 color = contribui),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               color = contribui,
+               tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor)),
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
   scale_y_continuous(limits = \(y){c(0, max(y) * 1.1)},
@@ -1094,13 +1240,15 @@ g <- ggplot()  +
   scale_color_brewer(palette = "Set1") +
   labs(x = element_blank(),
        y = "milhões",
-       title = "População ocupada por contribuição ao instituto de previdência (2012-2023)",
+       title = "População ocupada por contribuição ao instituto de previdência",
        caption = "Fonte: PNADC-Trimestral") +
   theme_bw() +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Pop_Contribuinte_NContribuintes")
-g
+g1 <- girafe(ggobj = g)
+g1
+
 ```
 
 O Sidra não divulgou os valores para a série nos trimestres onde a pesquisa foi feita por telefone em 2020, devido à pandemia.
@@ -1108,6 +1256,7 @@ O Sidra não divulgou os valores para a série nos trimestres onde a pesquisa fo
 # 22) Subocupação
 
 ```{r, s22}
+
 d <- sidrar::get_sidra(api = "/t/6808/n1/all/v/9819,9820,9879,9883,9886/p/all/d/v9819%201,v9820%201,v9879%201,v9883%201") #Sub_ocupacao
 #selecionando dados e dando novos nomes as colunas
 d <- filter(d, `Variável (Código)` == 9819)
@@ -1117,21 +1266,29 @@ d1 <- d %>%  mutate(date = `Trimestre (Código)`,
 
 g <- ggplot()  +
   geom_line(data = d1,
-            aes(x =date,
+            aes(x = date,
                 y = Valor),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor, "%")),
+           color = "black",
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
   scale_y_continuous( limits = c(0,10)) +
   labs(x = element_blank(),
        y = element_blank(),
-       title = "Taxa de subocupação por insuficiência de horas trabalhadas(2012-2023)",
+       title = "Taxa de subocupação por insuficiência de horas trabalhadas",
        caption = "Fonte: PNADC-Trimestral") +
   theme_bw() +
   tema_padrao
 
 f_ggsave(g, "PNADCT_Taxa_Subocupacao")
-g
+g1 <- girafe(ggobj = g)
+g1
+
 ```
 
 A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas. Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. Por conta disto, não são realizadas comparações (trimestrais e/ou anuais) entre trimestres que não compartilham o mesmo conceito/forma de captação.
@@ -1150,10 +1307,16 @@ d1 <- d %>%  mutate(date = `Trimestre (Código)`,
 
 g <- ggplot()  +
   geom_line(data = d1,
-            aes(x =date,
+            aes(x = date,
                 y = Valor,
                 color = pos_ocup),
             linewidth = 1.5) +
+  geom_point_interactive(data = d1,
+           aes(x = date,
+               y = Valor,
+               color = pos_ocup,
+               tooltip = paste0(format(date, format = "%m/%Y"), " R$", Valor )),
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
   scale_y_continuous(labels = scales::dollar_format(accuracy = 1,
@@ -1164,13 +1327,14 @@ g <- ggplot()  +
   scale_color_brewer(palette = "Set1") +
   labs(x = element_blank(),
        y = element_blank(),
-       title = "Rendimento Real médio habitual do trabalho principal por posição na \nocupação (2012-2023)",
+       title = "Rendimento real médio habitual do trabalho principal por posição na ocupação",
        caption = "Fonte: PNADC-Trimestral") +
   theme_bw() +
   tema_padrao
 f_ggsave(g, "PNADCT_Redimento_Real_Hab_Pos_Ocup")
 
-g
+g1 <- girafe(ggobj = g)
+g1
 ```
 
 
@@ -1194,10 +1358,16 @@ d3 <- mutate(d2, tamanho = case_when(tamanho_codigo == 40304 ~ "Entre 1 e 5 pess
                                    tamanho_codigo == 40307 ~ "Mais de 51"))
 g <- ggplot()  +
   geom_line(data = d3,
-            aes(x =date,
+            aes(x = date,
                 y = Valor,
                 color = tamanho),
             linewidth = 1.5) +
+  geom_point_interactive(data = d3,
+           aes(x = date,
+               y = Valor,
+               color = tamanho,
+               tooltip = paste0(format(date, format = "%m/%Y"), " ", Valor )),
+           size = 0.7) +   
   scale_x_date(date_breaks = "1 year",
                labels = scales::date_format("%Y"))  +
   scale_y_continuous( limits= \(y){c(0, max(y) * 1.1)},
@@ -1205,7 +1375,7 @@ g <- ggplot()  +
                                                     accuracy = 1)) +
   scale_color_brewer(palette = "Set1") +
   labs(x = element_blank(),
-       y = "milhões",
+       y = "Milhões",
        title = "População ocupada por tamanho de empreendimento",
        caption = "Fonte: PNADC-Anual") +
   theme_bw() +
@@ -1213,6 +1383,7 @@ g <- ggplot()  +
 
 f_ggsave(g, "PNADCT_Pessoas_por_tamanho_empresa")
 
-g
+g1 <- girafe(ggobj = g)
+g1
 
 ```
