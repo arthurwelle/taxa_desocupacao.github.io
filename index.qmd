@@ -92,7 +92,7 @@ embed_data <- function(x = mtcars, filename= "file.csv", label= "Download"){
 
 
 
-Veja código no <a href = "https://github.com/arthurwelle/taxa_desocupacao.github.io">github</a>.
+Veja código no site <a href = "https://github.com/arthurwelle/taxa_desocupacao.github.io">github</a>.
 
 
 
