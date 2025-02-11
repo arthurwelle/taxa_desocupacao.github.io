@@ -20,10 +20,13 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 # install.packages("scales")
 # install.packages("data.table")
 
+# install.packages("openssl")
+
 library(tidyverse)
 library(sidrar)
 library(ipeadatar)
 library(ggiraph)
+library(openssl)
 
 # se instalar pacotes novos nesse projeto, precisa adiconaar ao lockfile
 # renv::status()
@@ -66,12 +69,29 @@ MM12m <- function(x) {
 }
 
 
+# Vincula csv ao html
+embed_data <- function(x = mtcars, filename= "file.csv", label= "Download"){
+  # Create encoded Base64 datastream 
+  encode_data= function(x){
+    write.csv2(x, "file.csv")
+    enc= sprintf('data:text/csv;base64,%s', openssl::base64_encode(paste0(readLines("./file.csv"), collapse="\n")) )
+    unlink("./file.csv")
+    return(enc)
+  }
+  
+  # String result ready to be placed in rmarkdown
+  paste0("<a download='", filename, "' href=", encode_data(x), ">", label, "</a>")
+  
+}
+
 
 ```
 
 Última atualização em: `r as.POSIXct(format(Sys.time()), tz = "GMT")`.
 
-Veja: https://github.com/arthurwelle/taxa_desocupacao.github.io
+
+Veja código em https://github.com/arthurwelle/taxa_desocupacao.github.io
+
 
 
 
@@ -132,6 +152,8 @@ g1
 ```
 
 
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
+
 
 
 
@@ -184,6 +206,9 @@ g1
 ```
 
 
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
+
 # 3) Nível de desocupação (PNADC-T)
 
 ```{r, s2}
@@ -228,6 +253,8 @@ g1
 ```
 
 
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
 
 # 4) Quantidade de pessoas na força de trabalho
 
@@ -267,6 +294,9 @@ f_ggsave(g, "Forca_Trabalho", h = 5)
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
 
 
 # 5) Taxa de desocupação por faixa etária (PNADC-T)
@@ -317,6 +347,9 @@ g1
 ```
 
 
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
+
 # 6) Quantidade de ocupados
 
 ```{r, s5}
@@ -355,6 +388,9 @@ f_ggsave(g, "PNADCM_Qtd_Ocupados", h = 5)
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
 
 
 # 7) Contribuição para a variação dos ocupados (média móvel 12 meses)
@@ -466,6 +502,8 @@ g1
 ```
 
 
+Download dos `r embed_data(d4, filename = "Dados.csv", label = "dados")`.
+
 
 ```{r, fig.height=8, fig.width=8}
 d1 <- d %>%
@@ -556,6 +594,10 @@ g1 <- girafe(ggobj = g)
 g1
 ```
 
+
+Download dos `r embed_data(d4, filename = "Dados.csv", label = "dados")`.
+
+
 # 8) Quantidade de desocupados
 
 ```{r, s7}
@@ -594,6 +636,9 @@ f_ggsave(g, "PNADCM_Qtd_Desocupados", h = 5)
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
 
 
 # 9) Quantidade de subocupados
@@ -649,6 +694,9 @@ g1
 ```
 
 
+Download dos `r embed_data(d2, filename = "Dados.csv", label = "dados")`.
+
+
 # 10) Quantidade de desalentados
 
 ```{r, s9}
@@ -692,6 +740,9 @@ f_ggsave(g, "PNADCT_Qtd_Desalentadas")
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d2, filename = "Dados.csv", label = "dados")`.
 
 
 # 11) Força de trabalho potencial
@@ -739,6 +790,9 @@ g1
 ```
 
 
+Download dos `r embed_data(d2, filename = "Dados.csv", label = "dados")`.
+
+
 # 12) Quantidade de pessoas subutilizadas
 
 ```{r, s11}
@@ -778,6 +832,10 @@ f_ggsave(g, "QtdSubutilizacao", h = 5)
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
+
 
 Nota: A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas (subocupação). Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. <a href="https://ftp.ibge.gov.br/Trabalho_e_Rendimento/Pesquisa_Nacional_por_Amostra_de_Domicilios_continua/Nota_Tecnica/Nota_Tecnica_022016.pdf">Mais informações aqui.</a>
 
@@ -865,6 +923,9 @@ g1
 
 ```
 
+
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
+
 Nota: Houve mudança metodológica na subocupação por insuficiência de horas, apontada no item anterior. Por conta disto, neste caso, equalizamos o patamar da série até 2015 para manter a comparação com a série na metologia atual.
 
 
@@ -915,6 +976,9 @@ f_ggsave(g, "PNADCT_RendaMedEfeTodosTrab")
 g1 <- girafe(ggobj = g)
 g1
 ```
+
+
+Download dos `r embed_data(d2, filename = "Dados.csv", label = "dados")`.
 
 
 # 15) Rendimento efetivo médio trabalhos principal, por posição na ocupação
@@ -974,6 +1038,9 @@ g1
 ```
 
 
+Download dos `r embed_data(d2, filename = "Dados.csv", label = "dados")`.
+
+
 # 16) Massa real de rendimentos de todos os trabalhos
 
 ```{r, s15}
@@ -1026,6 +1093,9 @@ g1
 
 
 
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
+
 # 17) Percentual de pessoas contribuintes de instituto de previdência em qualquer trabalho entre ocupados
 
 ```{r, s17}
@@ -1066,6 +1136,8 @@ g1 <- girafe(ggobj = g)
 g1
 ```
 
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
 
 
 # 18) Salário mínimo real
@@ -1118,6 +1190,8 @@ g1
 ```
 
 
+Download dos `r embed_data(d, filename = "Dados.csv", label = "dados")`.
+
 
 
 
@@ -1160,6 +1234,10 @@ g1 <- girafe(ggobj = g)
 g1
 
 ```
+
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
 
 O Sidra não divulgou os valores para a série nos trimestres onde a pesquisa foi feita por telefone em 2020, devido à pandemia.
 
@@ -1207,6 +1285,10 @@ g1
 
 ```
 
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
+
 O Sidra não divulgou os valores para a série nos trimestres onde a pesquisa foi feita por telefone em 2020, devido à pandemia.
 
 # 21) População ocupada por contribuição ao instituto de previdência
@@ -1251,6 +1333,9 @@ g1
 
 ```
 
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
 O Sidra não divulgou os valores para a série nos trimestres onde a pesquisa foi feita por telefone em 2020, devido à pandemia.
 
 # 22) Subocupação
@@ -1290,6 +1375,10 @@ g1 <- girafe(ggobj = g)
 g1
 
 ```
+
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
+
 
 A partir do 4º trimestre de 2015 houve mudança de conceito na subutilização da força de trabalho por insuficiência de horas trabalhadas. Anteriormente, considerava-se no cálculo do indicador as horas efetivamente trabalhadas e, a partir do referido trimestre, as habitualmente trabalhadas. Houve ainda mudança na forma de captação do quesito de horas trabalhadas. Por conta disto, não são realizadas comparações (trimestrais e/ou anuais) entre trimestres que não compartilham o mesmo conceito/forma de captação.
 
@@ -1337,6 +1426,8 @@ g1 <- girafe(ggobj = g)
 g1
 ```
 
+
+Download dos `r embed_data(d1, filename = "Dados.csv", label = "dados")`.
 
 
 
@@ -1387,4 +1478,7 @@ g1 <- girafe(ggobj = g)
 g1
 
 ```
+
+
+Download dos `r embed_data(d3, filename = "Dados.csv", label = "dados")`.
 
