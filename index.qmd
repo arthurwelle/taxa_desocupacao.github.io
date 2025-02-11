@@ -413,7 +413,7 @@ g <- ggplot2::ggplot()  +
           labs(title = "Contribuição para a variação da média móvel 12 meses do total de ocupados por posição na ocupação e formalização (2017-2023)",
                x = element_blank(),
                y = "Contribuição para a variação anual",
-               caption = "Fonte: PNADC Mensal") +
+               caption = "Fonte: PNADC-Mensal") +
           theme_bw() +
           tema_padrao +
           theme(legend.position = "bottom",
