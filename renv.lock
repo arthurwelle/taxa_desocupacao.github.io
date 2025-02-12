@@ -1038,21 +1038,13 @@
     },
     "openssl": {
       "Package": "openssl",
-<<<<<<< HEAD
-      "Version": "2.2.2",
-=======
       "Version": "2.3.2",
->>>>>>> a00166d (adicionando botão de download2)
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "askpass"
       ],
-<<<<<<< HEAD
-      "Hash": "d413e0fef796c9401a4419485f709ca1"
-=======
       "Hash": "bc54d87ebf858b28de18df4bca6528d3"
->>>>>>> a00166d (adicionando botão de download2)
     },
     "pillar": {
       "Package": "pillar",
